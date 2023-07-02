@@ -2,14 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 
 const targetVersion = process.env.npm_package_version;
 
-function updateVersion(beta) {
-  const manifestBeta = JSON.parse(readFileSync("manifest-beta.json", "utf8"));
-  manifestBeta.version = targetVersion;
-  writeFileSync("manifest-beta.json", JSON.stringify(manifestBeta, null, "  "));
-  if (beta) {
-    return;
-  }
-
+function updateVersion() {
   const manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
   const { minAppVersion } = manifest;
   manifest.version = targetVersion;
@@ -21,4 +14,4 @@ function updateVersion(beta) {
   writeFileSync("versions.json", JSON.stringify(versions, null, "  "));
 }
 
-updateVersion(targetVersion.includes("beta"));
+updateVersion();
