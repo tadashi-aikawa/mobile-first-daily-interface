@@ -1,6 +1,7 @@
 import * as React from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Box, Button, Textarea } from "@chakra-ui/react";
+import { Notice } from "obsidian";
 
 interface Props {
   onSubmit: (input: string) => void;
@@ -8,9 +9,11 @@ interface Props {
 
 export const ReactView = ({ onSubmit }: Props) => {
   const [input, setInput] = useState("");
+  const canSubmit = useMemo(() => input.length > 0, [input]);
   const handleClickSubmit = () => {
     onSubmit(input);
     setInput("");
+    new Notice("Submitted", 1000);
   };
 
   return (
@@ -18,8 +21,9 @@ export const ReactView = ({ onSubmit }: Props) => {
       display="flex"
       justifyContent="center"
       flexDirection="column"
-      gap="8px"
+      gap="1rem"
       maxWidth="800px"
+      marginTop="8rem"
     >
       <Textarea
         placeholder="Input anything"
@@ -27,7 +31,11 @@ export const ReactView = ({ onSubmit }: Props) => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <Button variant="outline" onClick={handleClickSubmit}>
+      <Button
+        isDisabled={!canSubmit}
+        className={canSubmit ? "mod-cta" : ""}
+        onClick={handleClickSubmit}
+      >
         Submit
       </Button>
     </Box>
