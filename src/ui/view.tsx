@@ -20,11 +20,7 @@ export class FreeWritingView extends ItemView {
     const todayNote = getDailyNote(moment(), getAllDailyNotes());
     await this.appHelper.insertTextToEnd(
       todayNote,
-      `
-
-----
-
-${message}`
+      "\n" + "````fw" + "\n" + message + "\n" + "````" + "\n"
     );
   }
 
