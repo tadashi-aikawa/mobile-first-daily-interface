@@ -1,4 +1,11 @@
-import { App, Editor, MarkdownView, TFile } from "obsidian";
+import { App, Editor, MarkdownView, moment, TFile } from "obsidian";
+import { Moment } from "moment";
+
+export interface CodeBlock {
+  lang: string;
+  timestamp: Moment;
+  code: string;
+}
 
 interface UnsafeAppInterface {
   commands: {
@@ -33,5 +40,29 @@ export class AppHelper {
 
   insertTextToEnd(file: TFile, text: string) {
     return this.unsafeApp.vault.adapter.append(file.path, text);
+  }
+
+  async getCodeBlocks(file: TFile): Promise<CodeBlock[] | null> {
+    const content = await this.loadFile(file.path);
+
+    return (
+      this.unsafeApp.metadataCache
+        .getFileCache(file)
+        ?.sections?.filter((x) => x.type === "code")
+        .map((x) =>
+          content.slice(x.position.start.offset, x.position.end.offset)
+        )
+        .map((x) => {
+          const lines = x.split("\n");
+
+          const lang = lines[0].split(" ")[0].replace("````", "");
+          const timestamp = lines[0].split(" ")[1];
+          return {
+            lang,
+            timestamp: moment(timestamp),
+            code: lines.slice(1, -1).join("\n"),
+          };
+        }) ?? null
+    );
   }
 }

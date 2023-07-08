@@ -1,5 +1,4 @@
-import { ItemView, moment, WorkspaceLeaf } from "obsidian";
-import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
+import { ItemView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import { ReactView } from "./ReactView";
 import { createRoot, Root } from "react-dom/client";
@@ -16,18 +15,6 @@ export class FreeWritingView extends ItemView {
     this.appHelper = new AppHelper(this.app);
   }
 
-  async handleSubmit(message: string) {
-    const todayNote = getDailyNote(moment(), getAllDailyNotes());
-    await this.appHelper.insertTextToEnd(
-      todayNote,
-      `
-\`\`\`\`fw ${moment().toISOString(true)}
-${message}
-\`\`\`\`
-`
-    );
-  }
-
   getViewType() {
     return VIEW_TYPE_FREE_WRITING;
   }
@@ -38,11 +25,7 @@ ${message}
 
   async onOpen() {
     this.root = createRoot(this.containerEl.children[1]);
-    this.root.render(
-      <React.StrictMode>
-        <ReactView onSubmit={this.handleSubmit.bind(this)} />
-      </React.StrictMode>
-    );
+    this.root.render(<ReactView app={this.app} />);
   }
 
   async onClose() {
