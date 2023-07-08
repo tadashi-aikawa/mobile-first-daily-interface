@@ -123,7 +123,11 @@ ${input}
       >
         Submit
       </Button>
-      <Box maxHeight="calc(100vh - 24rem)" overflowY="scroll">
+      <Box
+        maxHeight="calc(100vh - 24rem)"
+        overflowY="scroll"
+        overflowX="hidden"
+      >
         {cards}
       </Box>
     </Box>
