@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Box, Button, Textarea } from "@chakra-ui/react";
-import { App, moment, TFile } from "obsidian";
+import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import Markdown from "marked-react";
-import { TimeIcon } from "@chakra-ui/icons";
+import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 interface Props {
@@ -39,6 +39,11 @@ ${input}
     if (posts) {
       setPosts(posts.sort(sorter((x) => x.timestamp.unix(), "desc")));
     }
+  };
+
+  const handleClickCopyIcon = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    new Notice("copied");
   };
 
   useEffect(() => {
@@ -89,10 +94,19 @@ ${input}
                 display={"flex"}
                 alignItems={"center"}
                 justifyContent={"end"}
-                gap={3}
+                gap={8}
               >
-                <TimeIcon />
-                {x.timestamp.format("H:mm:ss")}
+                <Box>
+                  <TimeIcon marginRight={2} />
+                  {x.timestamp.format("H:mm:ss")}
+                </Box>
+                <Box>
+                  <CopyIcon
+                    marginRight={2}
+                    onClick={() => handleClickCopyIcon(x.code)}
+                  />
+                  copy
+                </Box>
               </Box>
             </Box>
           </CSSTransition>
