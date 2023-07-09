@@ -1,15 +1,24 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  CheckboxIcon,
+  IconButton,
+  Textarea,
+} from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import Markdown from "marked-react";
 import {
+  CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CopyIcon,
+  SearchIcon,
   TimeIcon,
 } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -25,6 +34,7 @@ export const ReactView = ({ app }: Props) => {
   const [date, setDate] = useState<Moment>(moment());
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState<CodeBlock[]>([]);
+  const [asTask, setAsTask] = useState(false);
   const canSubmit = useMemo(() => input.length > 0, [input]);
 
   const currentDailyNote = useMemo(
@@ -44,13 +54,19 @@ export const ReactView = ({ app }: Props) => {
   }, [currentDailyNote]);
 
   const handleClickSubmit = async () => {
-    await appHelper.insertTextToEnd(
-      getDailyNote(moment(), getAllDailyNotes()),
-      `
+    const text = asTask
+      ? `
+- [ ] ${input}
+`
+      : `
 \`\`\`\`fw ${moment().toISOString(true)}
 ${input}
 \`\`\`\`
-`
+`;
+
+    await appHelper.insertTextToEnd(
+      getDailyNote(moment(), getAllDailyNotes()),
+      text
     );
     setInput("");
   };
@@ -175,16 +191,36 @@ ${input}
         resize={"none"}
         disabled={!currentDailyNote}
       />
-      <Button
-        isDisabled={!canSubmit}
-        className={canSubmit ? "mod-cta" : ""}
-        onClick={handleClickSubmit}
-        minHeight={"2.4em"}
-        maxHeight={"2.4em"}
-        disabled={!currentDailyNote}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        gap="1rem"
       >
-        Submit
-      </Button>
+        <Button
+          isDisabled={!canSubmit}
+          className={canSubmit ? "mod-cta" : ""}
+          onClick={handleClickSubmit}
+          minHeight={"2.4em"}
+          maxHeight={"2.4em"}
+          disabled={!currentDailyNote}
+          flexGrow={1}
+        >
+          Submit
+        </Button>
+        <Checkbox
+          width="10rem"
+          isChecked={asTask}
+          onChange={() => setAsTask(!asTask)}
+        >
+          <Box
+            color={asTask ? "var(--text-success)" : "var(--text-faint)"}
+            opacity={asTask ? 1 : 0.2}
+          >
+            as a task
+          </Box>
+        </Checkbox>
+      </Box>
       <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
         {currentDailyNote && cards}
       </Box>
