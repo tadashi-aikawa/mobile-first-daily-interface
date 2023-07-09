@@ -170,7 +170,7 @@ ${input}
         gap="1rem"
       >
         <ChevronLeftIcon onClick={handleClickMovePrevious} />
-        <span onClick={handleClickDate}>{date.format("yyyy-MM-DD")}</span>
+        <span onClick={handleClickDate}>{date.format("YYYY-MM-DD")}</span>
         <ChevronRightIcon onClick={handleClickMoveNext} />
       </Box>
       <Textarea
