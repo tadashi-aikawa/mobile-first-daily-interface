@@ -159,8 +159,8 @@ ${input}
       display="flex"
       justifyContent="center"
       flexDirection="column"
-      gap="1rem"
-      height="90%"
+      gap="0.75rem"
+      height="95%"
       maxWidth="30rem"
     >
       <Box
