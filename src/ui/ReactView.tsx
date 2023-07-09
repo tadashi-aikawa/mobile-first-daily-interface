@@ -1,24 +1,15 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  CheckboxIcon,
-  IconButton,
-  Textarea,
-} from "@chakra-ui/react";
+import { Box, Button, Checkbox, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import Markdown from "marked-react";
 import {
-  CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CopyIcon,
-  SearchIcon,
   TimeIcon,
 } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
