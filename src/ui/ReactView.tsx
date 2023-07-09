@@ -122,26 +122,27 @@ ${input}
       justifyContent="center"
       flexDirection="column"
       gap="1rem"
-      maxWidth="800px"
+      height="90%"
+      maxWidth="30rem"
     >
       <Textarea
         placeholder="Input anything"
-        rows={8}
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        minHeight={"8em"}
+        maxHeight={"8em"}
+        resize={"none"}
       />
       <Button
         isDisabled={!canSubmit}
         className={canSubmit ? "mod-cta" : ""}
         onClick={handleClickSubmit}
+        minHeight={"2.4em"}
+        maxHeight={"2.4em"}
       >
         Submit
       </Button>
-      <Box
-        maxHeight="calc(100vh - 24rem)"
-        overflowY="scroll"
-        overflowX="hidden"
-      >
+      <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
         {cards}
       </Box>
     </Box>
