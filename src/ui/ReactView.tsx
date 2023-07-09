@@ -6,8 +6,14 @@ import { AppHelper, CodeBlock } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import Markdown from "marked-react";
-import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CopyIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { Moment } from "moment";
 
 interface Props {
   app: App;
@@ -16,15 +22,27 @@ interface Props {
 export const ReactView = ({ app }: Props) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
 
+  const [date, setDate] = useState<Moment>(moment());
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState<CodeBlock[]>([]);
   const canSubmit = useMemo(() => input.length > 0, [input]);
 
-  const getTodayNote = () => getDailyNote(moment(), getAllDailyNotes());
+  const currentDailyNote = useMemo(
+    () => getDailyNote(date, getAllDailyNotes()) as TFile | null,
+    [date]
+  );
+
+  useEffect(() => {
+    if (!currentDailyNote) {
+      return;
+    }
+
+    updatePosts(currentDailyNote);
+  }, [currentDailyNote]);
 
   const handleClickSubmit = async () => {
     await appHelper.insertTextToEnd(
-      getTodayNote(),
+      currentDailyNote!,
       `
 \`\`\`\`fw ${moment().toISOString(true)}
 ${input}
@@ -46,18 +64,32 @@ ${input}
     new Notice("copied");
   };
 
+  const handleClickDate = () => {
+    if (!currentDailyNote) {
+      return;
+    }
+
+    app.workspace.getLeaf(true).openFile(currentDailyNote);
+  };
+  const handleClickMovePrevious = () => {
+    setDate(date.clone().subtract(1, "day"));
+  };
+  const handleClickMoveNext = () => {
+    setDate(date.clone().add(1, "day"));
+  };
+
   useEffect(() => {
     const eventRef = app.metadataCache.on(
       "changed",
       async (file, data, cache) => {
-        if (file.path !== getTodayNote().path) {
+        if (file.path !== currentDailyNote?.path) {
           return;
         }
 
         await updatePosts(file);
       }
     );
-    updatePosts(getTodayNote());
+    // updatePosts(currentDailyNote);
 
     return () => {
       app.metadataCache.offref(eventRef);
@@ -100,11 +132,8 @@ ${input}
                   <TimeIcon marginRight={2} />
                   {x.timestamp.format("H:mm:ss")}
                 </Box>
-                <Box>
-                  <CopyIcon
-                    marginRight={2}
-                    onClick={() => handleClickCopyIcon(x.code)}
-                  />
+                <Box onClick={() => handleClickCopyIcon(x.code)}>
+                  <CopyIcon marginRight={2} />
                   copy
                 </Box>
               </Box>
@@ -125,6 +154,16 @@ ${input}
       height="90%"
       maxWidth="30rem"
     >
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        gap="1rem"
+      >
+        <ChevronLeftIcon onClick={handleClickMovePrevious} />
+        <span onClick={handleClickDate}>{date.format("yyyy-MM-DD")}</span>
+        <ChevronRightIcon onClick={handleClickMoveNext} />
+      </Box>
       <Textarea
         placeholder="Input anything"
         value={input}
@@ -132,6 +171,7 @@ ${input}
         minHeight={"8em"}
         maxHeight={"8em"}
         resize={"none"}
+        disabled={!currentDailyNote}
       />
       <Button
         isDisabled={!canSubmit}
@@ -139,11 +179,12 @@ ${input}
         onClick={handleClickSubmit}
         minHeight={"2.4em"}
         maxHeight={"2.4em"}
+        disabled={!currentDailyNote}
       >
         Submit
       </Button>
       <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
-        {cards}
+        {currentDailyNote && cards}
       </Box>
     </Box>
   );
