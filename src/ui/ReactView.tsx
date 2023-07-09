@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Button, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock } from "../app-helper";
@@ -31,8 +31,11 @@ export const ReactView = ({ app }: Props) => {
     () => getDailyNote(date, getAllDailyNotes()) as TFile | null,
     [date]
   );
+  const currentDailyNoteRef = useRef(currentDailyNote);
 
   useEffect(() => {
+    currentDailyNoteRef.current = currentDailyNote;
+
     if (!currentDailyNote) {
       return;
     }
@@ -42,7 +45,7 @@ export const ReactView = ({ app }: Props) => {
 
   const handleClickSubmit = async () => {
     await appHelper.insertTextToEnd(
-      currentDailyNote!,
+      getDailyNote(moment(), getAllDailyNotes()),
       `
 \`\`\`\`fw ${moment().toISOString(true)}
 ${input}
@@ -82,14 +85,13 @@ ${input}
     const eventRef = app.metadataCache.on(
       "changed",
       async (file, data, cache) => {
-        if (file.path !== currentDailyNote?.path) {
+        if (file.path !== currentDailyNoteRef.current?.path) {
           return;
         }
 
         await updatePosts(file);
       }
     );
-    // updatePosts(currentDailyNote);
 
     return () => {
       app.metadataCache.offref(eventRef);
