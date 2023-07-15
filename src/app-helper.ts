@@ -7,6 +7,12 @@ export interface CodeBlock {
   code: string;
 }
 
+export interface Task {
+  mark: " " | string;
+  name: string;
+  offset: number;
+}
+
 interface UnsafeAppInterface {
   commands: {
     commands: { [commandId: string]: any };
@@ -23,6 +29,19 @@ export class AppHelper {
 
   async loadFile(path: string): Promise<string> {
     return this.unsafeApp.vault.adapter.read(path);
+  }
+
+  async setCheckMark(
+    path: string,
+    mark: "x" | " " | string,
+    offset: number
+  ): Promise<void> {
+    const origin = await this.loadFile(path);
+    const markOffset = offset + origin.slice(offset).indexOf("[") + 1;
+    await this.unsafeApp.vault.adapter.write(
+      path,
+      `${origin.slice(0, markOffset)}${mark}${origin.slice(markOffset + 1)}`
+    );
   }
 
   getActiveFile(): TFile | null {
@@ -61,6 +80,29 @@ export class AppHelper {
             lang,
             timestamp: moment(timestamp),
             code: lines.slice(1, -1).join("\n"),
+          };
+        }) ?? null
+    );
+  }
+
+  async getTasks(file: TFile): Promise<Task[] | null> {
+    const content = await this.loadFile(file.path);
+
+    return (
+      this.unsafeApp.metadataCache
+        .getFileCache(file)
+        ?.listItems?.filter((x) => x.task != null)
+        .map((x) => {
+          const text = content.slice(
+            x.position.start.offset,
+            x.position.end.offset
+          );
+          const name = text.matchAll(/[-*] \[(?<mark>.+)] +(?<name>.+)/g).next()
+            .value.groups.name as string;
+          return {
+            mark: x.task!,
+            name,
+            offset: x.position.start.offset,
           };
         }) ?? null
     );

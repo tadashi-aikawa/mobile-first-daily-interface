@@ -1,14 +1,15 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Checkbox, Textarea } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Divider, Textarea } from "@chakra-ui/react";
 import { App, moment, TFile } from "obsidian";
-import { AppHelper, CodeBlock } from "../app-helper";
+import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
+import { TaskView } from "./TaskView";
 
 export const ReactView = ({ app }: { app: App }) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
@@ -16,6 +17,7 @@ export const ReactView = ({ app }: { app: App }) => {
   const [date, setDate] = useState<Moment>(moment());
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState<CodeBlock[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
   const canSubmit = useMemo(() => input.length > 0, [input]);
 
@@ -32,7 +34,7 @@ export const ReactView = ({ app }: { app: App }) => {
       return;
     }
 
-    updatePosts(currentDailyNote);
+    Promise.all([updatePosts(currentDailyNote), updateTasks(currentDailyNote)]);
   }, [currentDailyNote]);
 
   const handleClickSubmit = async () => {
@@ -60,6 +62,13 @@ ${input}
     }
   };
 
+  const updateTasks = async (note: TFile) => {
+    const tasks = await appHelper.getTasks(note);
+    if (tasks) {
+      setTasks(tasks);
+    }
+  };
+
   const handleClickDate = () => {
     if (!currentDailyNote) {
       return;
@@ -82,7 +91,7 @@ ${input}
           return;
         }
 
-        await updatePosts(file);
+        await Promise.all([updatePosts(file), updateTasks(file)]);
       }
     );
 
@@ -91,21 +100,89 @@ ${input}
     };
   }, []);
 
-  const cards = useMemo(
-    () => (
-      <TransitionGroup className="list">
-        {posts.map((x) => (
-          <CSSTransition
-            key={x.timestamp.unix()}
-            timeout={500}
-            classNames="item"
+  const updateTaskChecked = async (task: Task, checked: boolean) => {
+    if (!currentDailyNote) {
+      return;
+    }
+
+    const mark = checked ? "x" : " ";
+    setTasks(tasks.map((x) => (x.offset === task.offset ? { ...x, mark } : x)));
+    await appHelper.setCheckMark(currentDailyNote.path, mark, task.offset);
+  };
+
+  const contents = useMemo(
+    () =>
+      asTask ? (
+        <>
+          <Box
+            borderStyle={"solid"}
+            borderRadius={"10px"}
+            borderColor={"var(--table-border-color)"}
+            borderWidth={"2px"}
+            boxShadow={"0 1px 1px 0"}
+            marginY={8}
           >
-            <PostCardView codeBlock={x} />
-          </CSSTransition>
-        ))}
-      </TransitionGroup>
-    ),
-    [posts]
+            <TransitionGroup className="list">
+              {tasks
+                .filter((x) => x.mark === " ")
+                .map((x) => (
+                  <CSSTransition
+                    key={date.format() + x.name + x.mark}
+                    timeout={300}
+                    classNames="item"
+                  >
+                    <Box m={10}>
+                      <TaskView
+                        task={x}
+                        onChange={(c) => updateTaskChecked(x, c)}
+                      />
+                    </Box>
+                  </CSSTransition>
+                ))}
+            </TransitionGroup>
+          </Box>
+          <Box
+            borderStyle={"solid"}
+            borderRadius={"10px"}
+            borderColor={"var(--table-border-color)"}
+            borderWidth={"2px"}
+            boxShadow={"0 1px 1px 0"}
+            marginY={8}
+          >
+            <TransitionGroup className="list">
+              {tasks
+                .filter((x) => x.mark !== " ")
+                .map((x) => (
+                  <CSSTransition
+                    key={date.format() + x.name + x.mark}
+                    timeout={300}
+                    classNames="item"
+                  >
+                    <Box m={10}>
+                      <TaskView
+                        task={x}
+                        onChange={(c) => updateTaskChecked(x, c)}
+                      />
+                    </Box>
+                  </CSSTransition>
+                ))}
+            </TransitionGroup>
+          </Box>
+        </>
+      ) : (
+        <TransitionGroup className="list">
+          {posts.map((x) => (
+            <CSSTransition
+              key={x.timestamp.unix()}
+              timeout={300}
+              classNames="item"
+            >
+              <PostCardView codeBlock={x} />
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+      ),
+    [posts, tasks, asTask]
   );
 
   return (
@@ -166,8 +243,9 @@ ${input}
           </Box>
         </Checkbox>
       </Box>
+
       <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
-        {currentDailyNote && cards}
+        {currentDailyNote && contents}
       </Box>
     </Box>
   );
