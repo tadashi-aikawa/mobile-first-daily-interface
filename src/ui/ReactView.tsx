@@ -64,10 +64,7 @@ ${input}
   };
 
   const updateTasks = async (note: TFile) => {
-    const tasks = await appHelper.getTasks(note);
-    if (tasks) {
-      setTasks(tasks);
-    }
+    setTasks((await appHelper.getTasks(note)) ?? []);
   };
 
   const handleClickDate = () => {
