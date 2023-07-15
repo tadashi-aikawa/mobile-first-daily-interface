@@ -119,6 +119,7 @@ ${input}
             borderWidth={"2px"}
             boxShadow={"0 1px 1px 0"}
             marginY={8}
+            minHeight={50}
           >
             <TransitionGroup className="list">
               {tasks
@@ -146,6 +147,7 @@ ${input}
             borderWidth={"2px"}
             boxShadow={"0 1px 1px 0"}
             marginY={8}
+            minHeight={50}
           >
             <TransitionGroup className="list">
               {tasks
