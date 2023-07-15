@@ -1,25 +1,16 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Button, Checkbox, Textarea } from "@chakra-ui/react";
-import { App, moment, Notice, TFile } from "obsidian";
+import { App, moment, TFile } from "obsidian";
 import { AppHelper, CodeBlock } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
-import Markdown from "marked-react";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  TimeIcon,
-} from "@chakra-ui/icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Moment } from "moment";
+import { PostCardView } from "./PostCardView";
 
-interface Props {
-  app: App;
-}
-
-export const ReactView = ({ app }: Props) => {
+export const ReactView = ({ app }: { app: App }) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
 
   const [date, setDate] = useState<Moment>(moment());
@@ -69,11 +60,6 @@ ${input}
     }
   };
 
-  const handleClickCopyIcon = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    new Notice("copied");
-  };
-
   const handleClickDate = () => {
     if (!currentDailyNote) {
       return;
@@ -114,39 +100,7 @@ ${input}
             timeout={500}
             classNames="item"
           >
-            <Box
-              borderStyle={"solid"}
-              borderRadius={"10px"}
-              borderColor={"var(--table-border-color)"}
-              borderWidth={"2px"}
-              boxShadow={"0 1px 1px 0"}
-              marginY={8}
-            >
-              <Box fontSize={"85%"} paddingX={16}>
-                <Markdown gfm breaks>
-                  {x.code}
-                </Markdown>
-              </Box>
-              <Box
-                color={"var(--text-muted)"}
-                fontSize={"75%"}
-                paddingBottom={4}
-                paddingRight={10}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"end"}
-                gap={8}
-              >
-                <Box>
-                  <TimeIcon marginRight={2} />
-                  {x.timestamp.format("H:mm:ss")}
-                </Box>
-                <Box onClick={() => handleClickCopyIcon(x.code)}>
-                  <CopyIcon marginRight={2} />
-                  copy
-                </Box>
-              </Box>
-            </Box>
+            <PostCardView codeBlock={x} />
           </CSSTransition>
         ))}
       </TransitionGroup>
