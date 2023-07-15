@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Checkbox, Divider, Textarea } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Textarea } from "@chakra-ui/react";
 import { App, moment, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
@@ -56,10 +56,11 @@ ${input}
   };
 
   const updatePosts = async (note: TFile) => {
-    const posts = await appHelper.getCodeBlocks(note);
-    if (posts) {
-      setPosts(posts.sort(sorter((x) => x.timestamp.unix(), "desc")));
-    }
+    setPosts(
+      ((await appHelper.getCodeBlocks(note)) ?? [])
+        ?.filter((x) => x.lang === "fw")
+        .sort(sorter((x) => x.timestamp.unix(), "desc"))
+    );
   };
 
   const updateTasks = async (note: TFile) => {
