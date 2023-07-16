@@ -39,7 +39,10 @@ export const PostCardView = ({ codeBlock }: { codeBlock: CodeBlock }) => {
           <TimeIcon marginRight={2} />
           {codeBlock.timestamp.format("H:mm:ss")}
         </Box>
-        <Box onClick={() => handleClickCopyIcon(codeBlock.code)}>
+        <Box
+          cursor="pointer"
+          onClick={() => handleClickCopyIcon(codeBlock.code)}
+        >
           <CopyIcon marginRight={2} />
           copy
         </Box>
