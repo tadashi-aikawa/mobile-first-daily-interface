@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Checkbox, IconButton, Textarea } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Textarea } from "@chakra-ui/react";
 import { App, moment, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
@@ -191,26 +191,14 @@ ${input}
   );
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      flexDirection="column"
-      gap="0.75rem"
-      height="95%"
-      maxWidth="30rem"
-    >
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap="1rem"
-      >
+    <Flex flexDirection="column" gap="0.75rem" height="95%" maxWidth="30rem">
+      <HStack justify="center">
         <ChevronLeftIcon cursor="pointer" onClick={handleClickMovePrevious} />
         <Box cursor="pointer" onClick={handleClickDate}>
           {date.format("YYYY-MM-DD")}
         </Box>
         <ChevronRightIcon cursor="pointer" onClick={handleClickMoveNext} />
-      </Box>
+      </HStack>
       <Textarea
         placeholder="Input anything"
         value={input}
@@ -220,12 +208,7 @@ ${input}
         resize={"none"}
         disabled={!currentDailyNote}
       />
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap="1rem"
-      >
+      <HStack>
         <Button
           isDisabled={!canSubmit}
           className={canSubmit ? "mod-cta" : ""}
@@ -234,6 +217,7 @@ ${input}
           maxHeight={"2.4em"}
           disabled={!currentDailyNote}
           flexGrow={1}
+          cursor={canSubmit ? "pointer" : ""}
         >
           Submit
         </Button>
@@ -265,11 +249,11 @@ ${input}
             opacity={asTask ? 1 : 0.2}
           />
         </Box>
-      </Box>
+      </HStack>
 
       <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
         {currentDailyNote && contents}
       </Box>
-    </Box>
+    </Flex>
   );
 };

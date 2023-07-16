@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Task } from "../app-helper";
-import { Box } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { excludeWikiLink } from "../utils/strings";
 import Markdown from "marked-react";
 
@@ -12,7 +12,7 @@ export const TaskView = ({
   onChange: (checked: boolean) => void;
 }) => {
   return (
-    <Box display="flex" alignItems="center">
+    <HStack>
       <input
         type="checkbox"
         checked={task.mark !== " "}
@@ -24,6 +24,6 @@ export const TaskView = ({
           {excludeWikiLink(task.name)}
         </Markdown>
       </label>
-    </Box>
+    </HStack>
   );
 };

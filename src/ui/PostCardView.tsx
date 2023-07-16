@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CodeBlock } from "../app-helper";
 import { Notice } from "obsidian";
-import { Box } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
 
@@ -25,15 +25,12 @@ export const PostCardView = ({ codeBlock }: { codeBlock: CodeBlock }) => {
           {codeBlock.code}
         </Markdown>
       </Box>
-      <Box
+      <HStack
         color={"var(--text-muted)"}
         fontSize={"75%"}
         paddingBottom={4}
         paddingRight={10}
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"end"}
-        gap={8}
+        justify="end"
       >
         <Box>
           <TimeIcon marginRight={2} />
@@ -46,7 +43,7 @@ export const PostCardView = ({ codeBlock }: { codeBlock: CodeBlock }) => {
           <CopyIcon marginRight={2} />
           copy
         </Box>
-      </Box>
+      </HStack>
     </Box>
   );
 };
