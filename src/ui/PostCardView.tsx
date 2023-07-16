@@ -5,7 +5,13 @@ import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
 
-export const PostCardView = ({ codeBlock }: { codeBlock: CodeBlock }) => {
+export const PostCardView = ({
+  codeBlock,
+  onClickTime,
+}: {
+  codeBlock: CodeBlock;
+  onClickTime: (codeBlock: CodeBlock) => void;
+}) => {
   const handleClickCopyIcon = async (text: string) => {
     await navigator.clipboard.writeText(text);
     new Notice("copied");
@@ -32,7 +38,7 @@ export const PostCardView = ({ codeBlock }: { codeBlock: CodeBlock }) => {
         paddingRight={10}
         justify="end"
       >
-        <Box>
+        <Box cursor="pointer" onClick={() => onClickTime(codeBlock)}>
           <TimeIcon marginRight={2} />
           {codeBlock.timestamp.format("H:mm:ss")}
         </Box>

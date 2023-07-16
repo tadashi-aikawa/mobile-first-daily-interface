@@ -6,6 +6,7 @@ export interface CodeBlock {
   lang: string;
   timestamp: Moment;
   code: string;
+  offset: number;
 }
 
 export interface Task {
@@ -69,18 +70,22 @@ export class AppHelper {
       this.unsafeApp.metadataCache
         .getFileCache(file)
         ?.sections?.filter((x) => x.type === "code")
-        .map((x) =>
-          content.slice(x.position.start.offset, x.position.end.offset)
-        )
         .map((x) => {
-          const lines = x.split("\n");
+          const str = content.slice(
+            x.position.start.offset,
+            x.position.end.offset
+          );
+          const lines = str.split("\n");
 
           const lang = lines[0].split(" ")[0].replace("````", "");
           const timestamp = lines[0].split(" ")[1];
+          const offset = x.position.start.offset;
+
           return {
             lang,
             timestamp: moment(timestamp),
             code: lines.slice(1, -1).join("\n"),
+            offset,
           };
         }) ?? null
     );

@@ -76,7 +76,6 @@ ${input}
     if (!currentDailyNote) {
       return;
     }
-
     app.workspace.getLeaf(true).openFile(currentDailyNote);
   };
   const handleClickMovePrevious = () => {
@@ -84,6 +83,25 @@ ${input}
   };
   const handleClickMoveNext = () => {
     setDate(date.clone().add(1, "day"));
+  };
+
+  const handleClickTime = (codeBlock: CodeBlock) => {
+    (async () => {
+      if (!currentDailyNote) {
+        return;
+      }
+
+      // TODO: 今後必要に応じてAppHelperにだす
+      const leaf = app.workspace.getLeaf(true);
+      await leaf.openFile(currentDailyNote);
+
+      const editor = appHelper.getActiveMarkdownEditor()!;
+      const pos = editor.offsetToPos(codeBlock.offset);
+      editor.setCursor(pos);
+      await leaf.openFile(currentDailyNote, {
+        eState: { line: pos.line },
+      });
+    })();
   };
 
   useEffect(() => {
@@ -182,7 +200,7 @@ ${input}
               timeout={300}
               classNames="item"
             >
-              <PostCardView codeBlock={x} />
+              <PostCardView codeBlock={x} onClickTime={handleClickTime} />
             </CSSTransition>
           ))}
         </TransitionGroup>
