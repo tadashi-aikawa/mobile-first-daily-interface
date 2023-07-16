@@ -205,9 +205,11 @@ ${input}
         alignItems="center"
         gap="1rem"
       >
-        <ChevronLeftIcon onClick={handleClickMovePrevious} />
-        <span onClick={handleClickDate}>{date.format("YYYY-MM-DD")}</span>
-        <ChevronRightIcon onClick={handleClickMoveNext} />
+        <ChevronLeftIcon cursor="pointer" onClick={handleClickMovePrevious} />
+        <Box cursor="pointer" onClick={handleClickDate}>
+          {date.format("YYYY-MM-DD")}
+        </Box>
+        <ChevronRightIcon cursor="pointer" onClick={handleClickMoveNext} />
       </Box>
       <Textarea
         placeholder="Input anything"
