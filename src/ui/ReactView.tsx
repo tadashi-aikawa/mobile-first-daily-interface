@@ -1,11 +1,16 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Checkbox, Textarea } from "@chakra-ui/react";
+import { Box, Button, Checkbox, IconButton, Textarea } from "@chakra-ui/react";
 import { App, moment, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
 import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  ChatIcon,
+  CheckCircleIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
@@ -230,18 +235,34 @@ ${input}
         >
           Submit
         </Button>
-        <Checkbox
-          width="10rem"
-          isChecked={asTask}
-          onChange={() => setAsTask(!asTask)}
+        <Box
+          display="flex"
+          gap="0.5em"
+          padding={4}
+          marginRight={8}
+          borderStyle={"solid"}
+          borderRadius={"10px"}
+          borderColor={"var(--table-border-color)"}
+          borderWidth={"2px"}
+          cursor={"pointer"}
+          onClick={() => setAsTask(!asTask)}
+          _hover={{
+            borderColor: "var(--text-success)",
+            transitionDuration: "0.5s",
+          }}
+          transitionDuration={"0.5s"}
         >
-          <Box
+          <ChatIcon
+            boxSize={"1.5em"}
+            color={asTask ? "var(--text-faint)" : "var(--text-success)"}
+            opacity={asTask ? 0.2 : 1}
+          />
+          <CheckCircleIcon
+            boxSize={"1.5em"}
             color={asTask ? "var(--text-success)" : "var(--text-faint)"}
             opacity={asTask ? 1 : 0.2}
-          >
-            as a task
-          </Box>
-        </Checkbox>
+          />
+        </Box>
       </Box>
 
       <Box flexGrow={1} overflowY="scroll" overflowX="hidden">
