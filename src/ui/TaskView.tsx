@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Task } from "../app-helper";
 import { Box } from "@chakra-ui/react";
+import { excludeWikiLink } from "../utils/strings";
+import Markdown from "marked-react";
 
 export const TaskView = ({
   task,
@@ -17,7 +19,11 @@ export const TaskView = ({
         value={task.name}
         onChange={(ev) => onChange(ev.target.checked)}
       />
-      <label>{task.name}</label>
+      <label>
+        <Markdown gfm breaks isInline>
+          {excludeWikiLink(task.name)}
+        </Markdown>
+      </label>
     </Box>
   );
 };

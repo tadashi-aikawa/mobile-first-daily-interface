@@ -1,5 +1,6 @@
 import { App, Editor, MarkdownView, moment, TFile } from "obsidian";
 import { Moment } from "moment";
+import { pickTaskName } from "./utils/strings";
 
 export interface CodeBlock {
   lang: string;
@@ -97,8 +98,7 @@ export class AppHelper {
             x.position.start.offset,
             x.position.end.offset
           );
-          const name = text.matchAll(/[-*] \[(?<mark>.+)] +(?<name>.+)/g).next()
-            .value.groups.name as string;
+          const name = pickTaskName(text);
           return {
             mark: x.task!,
             name,
