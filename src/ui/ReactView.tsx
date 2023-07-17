@@ -1,10 +1,14 @@
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Button, Flex, HStack, Textarea } from "@chakra-ui/react";
-import { App, moment, TFile } from "obsidian";
+import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
-import { getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
+import {
+  createDailyNote,
+  getAllDailyNotes,
+  getDailyNote,
+} from "obsidian-daily-notes-interface";
 import {
   ChatIcon,
   CheckCircleIcon,
@@ -53,8 +57,16 @@ ${input}
 \`\`\`\`
 `;
 
+    if (!currentDailyNote) {
+      new Notice("デイリーノートが存在しなかったので新しく作成しました");
+      await createDailyNote(date);
+      // 再読み込みをするためにクローンを入れて参照を更新
+      setDate(date.clone());
+    }
+
+    // デイリーノートがなくてif文に入った場合、setDateからのuseMemoが間に合わずcurrentDailyNoteの値が更新されないので、意図的に同じ処理を呼び出す
     await appHelper.insertTextToEnd(
-      getDailyNote(moment(), getAllDailyNotes()),
+      getDailyNote(date, getAllDailyNotes()),
       text
     );
     setInput("");
@@ -116,8 +128,20 @@ ${input}
       }
     );
 
+    const deleteEventRef = app.vault.on("delete", async (file) => {
+      if (file.path !== currentDailyNoteRef.current?.path) {
+        return;
+      }
+
+      // 再読み込みをするためにクローンを入れて参照を更新
+      setDate(date.clone());
+      setTasks([]);
+      setPosts([]);
+    });
+
     return () => {
       app.metadataCache.offref(eventRef);
+      app.vault.offref(deleteEventRef);
     };
   }, []);
 
@@ -224,7 +248,6 @@ ${input}
         minHeight={"8em"}
         maxHeight={"8em"}
         resize={"none"}
-        disabled={!currentDailyNote}
       />
       <HStack>
         <Button
@@ -233,7 +256,6 @@ ${input}
           onClick={handleClickSubmit}
           minHeight={"2.4em"}
           maxHeight={"2.4em"}
-          disabled={!currentDailyNote}
           flexGrow={1}
           cursor={canSubmit ? "pointer" : ""}
         >
