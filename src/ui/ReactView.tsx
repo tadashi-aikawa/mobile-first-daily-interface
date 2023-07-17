@@ -242,7 +242,7 @@ ${input}
         <ChevronRightIcon cursor="pointer" onClick={handleClickMoveNext} />
       </HStack>
       <Textarea
-        placeholder="Input anything"
+        placeholder={asTask ? "タスクを入力" : "思ったことなどを記入"}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         minHeight={"8em"}
@@ -259,7 +259,7 @@ ${input}
           flexGrow={1}
           cursor={canSubmit ? "pointer" : ""}
         >
-          Submit
+          {asTask ? "タスク追加" : "投稿"}
         </Button>
         <Box
           display="flex"
