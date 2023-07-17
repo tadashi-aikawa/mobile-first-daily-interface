@@ -3,8 +3,7 @@
 [![release](https://img.shields.io/github/release/tadashi-aikawa/obsidian-free-writing.svg)](https://github.com/tadashi-aikawa/obsidian-free-writing/releases/latest)
 ![downloads](https://img.shields.io/github/downloads/tadashi-aikawa/obsidian-free-writing/total)
 
-![demo](https://raw.githubusercontent.com/tadashi-aikawa/obsidian-free-writing/master/demo.gif)
-
+<video autoplay muted controls src="https://publish-01.obsidian.md/access/35d05cd1bf5cc500e11cc8ba57daaf88/%F0%9F%A6%89My%20Products/attachments/2023-07-17_18h04_23.mp4"></video>
 
 [Obsidian]で[フリーライティング]するためのプラグインです。
 
