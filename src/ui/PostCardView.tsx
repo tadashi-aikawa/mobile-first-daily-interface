@@ -40,7 +40,7 @@ export const PostCardView = ({
       >
         <Box cursor="pointer" onClick={() => onClickTime(codeBlock)}>
           <TimeIcon marginRight={2} />
-          {codeBlock.timestamp.format("H:mm:ss")}
+          {codeBlock.timestamp.format("YYYY-MM-DD H:mm:ss")}
         </Box>
         <Box
           cursor="pointer"
