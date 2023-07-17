@@ -84,11 +84,18 @@ ${input}
     setTasks((await appHelper.getTasks(note)) ?? []);
   };
 
-  const handleClickDate = () => {
+  const handleClickDate = async () => {
     if (!currentDailyNote) {
-      return;
+      new Notice("デイリーノートが存在しなかったので新しく作成しました");
+      await createDailyNote(date);
+      // 再読み込みをするためにクローンを入れて参照を更新
+      setDate(date.clone());
     }
-    app.workspace.getLeaf(true).openFile(currentDailyNote);
+
+    // デイリーノートがなくてif文に入った場合、setDateからのuseMemoが間に合わずcurrentDailyNoteの値が更新されないので、意図的に同じ処理を呼び出す
+    await app.workspace
+      .getLeaf(true)
+      .openFile(getDailyNote(date, getAllDailyNotes()));
   };
   const handleClickMovePrevious = () => {
     setDate(date.clone().subtract(1, "day"));
