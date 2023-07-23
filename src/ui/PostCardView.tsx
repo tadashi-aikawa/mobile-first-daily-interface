@@ -4,6 +4,7 @@ import { Notice } from "obsidian";
 import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
+import { replaceDayToJa } from "../utils/strings";
 
 export const PostCardView = ({
   codeBlock,
@@ -40,7 +41,9 @@ export const PostCardView = ({
       >
         <Box cursor="pointer" onClick={() => onClickTime(codeBlock)}>
           <TimeIcon marginRight={2} />
-          {codeBlock.timestamp.format("YYYY-MM-DD H:mm:ss")}
+          {replaceDayToJa(
+            codeBlock.timestamp.format("YYYY-MM-DD(ddd) H:mm:ss")
+          )}
         </Box>
         <Box
           cursor="pointer"

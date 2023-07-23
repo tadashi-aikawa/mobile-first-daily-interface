@@ -19,6 +19,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
 import { TaskView } from "./TaskView";
+import { replaceDayToJa } from "../utils/strings";
 
 export const ReactView = ({ app }: { app: App }) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
@@ -244,7 +245,7 @@ ${input}
       <HStack justify="center">
         <ChevronLeftIcon cursor="pointer" onClick={handleClickMovePrevious} />
         <Box cursor="pointer" onClick={handleClickDate}>
-          {date.format("YYYY-MM-DD")}
+          {replaceDayToJa(date.format("YYYY-MM-DD(ddd)"))}
         </Box>
         <ChevronRightIcon cursor="pointer" onClick={handleClickMoveNext} />
       </HStack>
