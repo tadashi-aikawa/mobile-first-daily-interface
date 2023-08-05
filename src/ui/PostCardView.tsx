@@ -1,10 +1,15 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import { CodeBlock } from "../app-helper";
 import { Notice } from "obsidian";
 import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
-import { replaceDayToJa } from "../utils/strings";
+import { pickUrls, replaceDayToJa } from "../utils/strings";
+import { createMeta, HTMLMeta, ImageMeta } from "../utils/meta";
+import { isPresent } from "../utils/types";
+import { HTMLCard } from "./HTMLCard";
+import { ImageCard } from "./ImageCard";
 
 export const PostCardView = ({
   codeBlock,
@@ -13,10 +18,24 @@ export const PostCardView = ({
   codeBlock: CodeBlock;
   onClickTime: (codeBlock: CodeBlock) => void;
 }) => {
+  const [htmlMetas, setHtmlMetas] = useState<HTMLMeta[]>([]);
+  const [imageMetas, setImageMetas] = useState<ImageMeta[]>([]);
+
   const handleClickCopyIcon = async (text: string) => {
     await navigator.clipboard.writeText(text);
     new Notice("copied");
   };
+
+  useEffect(() => {
+    (async function () {
+      const urls = pickUrls(codeBlock.code);
+      const results = (await Promise.all(urls.map(createMeta))).filter(
+        isPresent
+      );
+      setHtmlMetas(results.filter((x): x is HTMLMeta => x.type === "html"));
+      setImageMetas(results.filter((x): x is ImageMeta => x.type === "image"));
+    })();
+  }, [codeBlock.code]);
 
   return (
     <Box
@@ -31,6 +50,12 @@ export const PostCardView = ({
         <Markdown gfm breaks>
           {codeBlock.code}
         </Markdown>
+        {htmlMetas.map((meta) => (
+          <HTMLCard meta={meta} />
+        ))}
+        {imageMetas.map((meta: ImageMeta) => (
+          <ImageCard meta={meta} />
+        ))}
       </Box>
       <HStack
         color={"var(--text-muted)"}

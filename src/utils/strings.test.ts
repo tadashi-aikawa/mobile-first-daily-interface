@@ -1,4 +1,9 @@
-import { excludeWikiLink, pickTaskName, replaceDayToJa } from "./strings";
+import {
+  excludeWikiLink,
+  pickTaskName,
+  pickUrls,
+  replaceDayToJa,
+} from "./strings";
 
 describe.each`
   text              | expected
@@ -39,5 +44,21 @@ describe.each`
 `("replaceDayToJa", ({ text, expected }) => {
   test(`replaceDayToJa(${text}) = ${expected}`, () => {
     expect(replaceDayToJa(text)).toBe(expected);
+  });
+});
+
+describe.each`
+  text                                             | expected
+  ${"https://hoge.com"}                            | ${["https://hoge.com"]}
+  ${"  https://hoge.com"}                          | ${["https://hoge.com"]}
+  ${"https://hoge.com  "}                          | ${["https://hoge.com"]}
+  ${"  https://hoge.com  "}                        | ${["https://hoge.com"]}
+  ${"aaa https://hoge.com bbb"}                    | ${["https://hoge.com"]}
+  ${"aaa\nhttps://hoge.com\nbbb"}                  | ${["https://hoge.com"]}
+  ${"aaa https://hoge.com bbb http://fuga.com"}    | ${["https://hoge.com", "http://fuga.com"]}
+  ${"aaa\nhttps://hoge.com\nbbb\nhttp://fuga.com"} | ${["https://hoge.com", "http://fuga.com"]}
+`("pickUrls", ({ text, expected }) => {
+  test(`pickUrls(${text}) = ${expected}`, () => {
+    expect(pickUrls(text)).toStrictEqual(expected);
   });
 });

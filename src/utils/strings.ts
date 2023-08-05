@@ -1,3 +1,5 @@
+import { RegExpMatchedArray } from "./types";
+
 export function excludeWikiLink(text: string): string {
   return text
     .replace(/\[\[[^\]]+\|(.*?)]]/g, "$1")
@@ -18,4 +20,11 @@ export function replaceDayToJa(text: string): string {
     .replace("Thu", "木")
     .replace("Fri", "金")
     .replace("Sat", "土");
+}
+
+export function pickUrls(str: string): string[] {
+  const urlsMatches = Array.from(
+    str.matchAll(/(^| |\(|\n)(?<url>https?:\/\/[^ )\n]+)/g)
+  ) as RegExpMatchedArray[];
+  return urlsMatches.map((x) => x.groups.url);
 }

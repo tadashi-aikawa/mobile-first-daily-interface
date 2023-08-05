@@ -101,7 +101,7 @@ ${input}
   const handleClickMovePrevious = () => {
     setDate(date.clone().subtract(1, "day"));
   };
-  const handleClickMoveNext = () => {
+  const handleClickMoveNext = async () => {
     setDate(date.clone().add(1, "day"));
   };
 
@@ -261,11 +261,11 @@ ${input}
         <Button
           isDisabled={!canSubmit}
           className={canSubmit ? "mod-cta" : ""}
-          onClick={handleClickSubmit}
           minHeight={"2.4em"}
           maxHeight={"2.4em"}
           flexGrow={1}
           cursor={canSubmit ? "pointer" : ""}
+          onClick={handleClickSubmit}
         >
           {asTask ? "タスク追加" : "投稿"}
         </Button>
@@ -279,12 +279,12 @@ ${input}
           borderColor={"var(--table-border-color)"}
           borderWidth={"2px"}
           cursor={"pointer"}
-          onClick={() => setAsTask(!asTask)}
           _hover={{
             borderColor: "var(--text-success)",
             transitionDuration: "0.5s",
           }}
           transitionDuration={"0.5s"}
+          onClick={() => setAsTask(!asTask)}
         >
           <ChatIcon
             boxSize={"1.5em"}
