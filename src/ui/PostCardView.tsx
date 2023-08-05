@@ -6,10 +6,11 @@ import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon } from "@chakra-ui/icons";
 import { pickUrls, replaceDayToJa } from "../utils/strings";
-import { createMeta, HTMLMeta, ImageMeta } from "../utils/meta";
+import { createMeta, HTMLMeta, ImageMeta, TwitterMeta } from "../utils/meta";
 import { isPresent } from "../utils/types";
 import { HTMLCard } from "./HTMLCard";
 import { ImageCard } from "./ImageCard";
+import { TwitterCard } from "./TwitterCard";
 
 export const PostCardView = ({
   codeBlock,
@@ -20,6 +21,7 @@ export const PostCardView = ({
 }) => {
   const [htmlMetas, setHtmlMetas] = useState<HTMLMeta[]>([]);
   const [imageMetas, setImageMetas] = useState<ImageMeta[]>([]);
+  const [twitterMetas, setTwitterMetas] = useState<TwitterMeta[]>([]);
 
   const handleClickCopyIcon = async (text: string) => {
     await navigator.clipboard.writeText(text);
@@ -34,6 +36,9 @@ export const PostCardView = ({
       );
       setHtmlMetas(results.filter((x): x is HTMLMeta => x.type === "html"));
       setImageMetas(results.filter((x): x is ImageMeta => x.type === "image"));
+      setTwitterMetas(
+        results.filter((x): x is TwitterMeta => x.type === "twitter")
+      );
     })();
   }, [codeBlock.code]);
 
@@ -53,8 +58,11 @@ export const PostCardView = ({
         {htmlMetas.map((meta) => (
           <HTMLCard meta={meta} />
         ))}
-        {imageMetas.map((meta: ImageMeta) => (
+        {imageMetas.map((meta) => (
           <ImageCard meta={meta} />
+        ))}
+        {twitterMetas.map((meta) => (
+          <TwitterCard meta={meta} />
         ))}
       </Box>
       <HStack

@@ -45,7 +45,7 @@ function getCoverUrl(dom: Document): string | undefined {
   );
 }
 
-export type Meta = HTMLMeta | ImageMeta;
+export type Meta = HTMLMeta | ImageMeta | TwitterMeta;
 export interface HTMLMeta {
   type: "html";
   siteName: string;
@@ -60,8 +60,42 @@ export interface ImageMeta {
   data: Blob;
   originUrl: string;
 }
+export interface TwitterMeta {
+  type: "twitter";
+  url: string;
+  author_name: string;
+  html: string;
+}
+
+async function getTwitterMeta(url: string): Promise<TwitterMeta | null> {
+  const twitterEmbedUrl = `https://publish.twitter.com/oembed?hide_media=true&hide_thread=true&omit_script=true&lang=ja&url=${url}`;
+  const res = await requestUrl({
+    url: twitterEmbedUrl,
+    headers: { "User-Agent": "bot" },
+  });
+  if (res.status >= 400) {
+    console.debug(`twitter embed status is ${res.status}`);
+    return null;
+  }
+
+  return res.json;
+}
 
 export async function createMeta(url: string): Promise<Meta | null> {
+  if (url.startsWith("https://twitter.com")) {
+    const res = await getTwitterMeta(url);
+    if (!res) {
+      return null;
+    }
+
+    return {
+      type: "twitter",
+      url,
+      author_name: res.author_name,
+      html: res.html,
+    };
+  }
+
   const res = await requestUrl({ url, headers: { "User-Agent": "bot" } });
   if (res.status >= 400) {
     console.debug(`status is ${res.status}`);
