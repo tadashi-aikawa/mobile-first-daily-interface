@@ -1,4 +1,5 @@
 import { requestUrl } from "obsidian";
+import { forceLowerCaseKeys } from "./collections";
 
 function getMetaByProperty(
   dom: Document,
@@ -67,7 +68,8 @@ export async function createMeta(url: string): Promise<Meta | null> {
     return null;
   }
 
-  const contentType = res.headers["content-type"];
+  const headers = forceLowerCaseKeys(res.headers);
+  const contentType = headers["content-type"] as string;
   if (contentType.startsWith("image/")) {
     return {
       type: "image",
