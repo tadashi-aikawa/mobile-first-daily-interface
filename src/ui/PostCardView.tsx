@@ -56,13 +56,13 @@ export const PostCardView = ({
           {codeBlock.code}
         </Markdown>
         {htmlMetas.map((meta) => (
-          <HTMLCard meta={meta} />
+          <HTMLCard key={meta.originUrl} meta={meta} />
         ))}
         {imageMetas.map((meta) => (
-          <ImageCard meta={meta} />
+          <ImageCard key={meta.originUrl} meta={meta} />
         ))}
         {twitterMetas.map((meta) => (
-          <TwitterCard meta={meta} />
+          <TwitterCard key={meta.url} meta={meta} />
         ))}
       </Box>
       <HStack
