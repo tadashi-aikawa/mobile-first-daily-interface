@@ -34,7 +34,6 @@ If your plugin does not need CSS, delete this file.
     z-index: 1;
     border: 1px dotted #b5890077;
     backdrop-filter: brightness(101%);
-    font-size: 90%;
     margin-bottom: 1em;
 }
 
@@ -68,10 +67,13 @@ If your plugin does not need CSS, delete this file.
     display: flex;
     align-items: center;
     margin-bottom: 0.5em;
+    /*noinspection CssUnresolvedCustomProperty*/
+    color: var(--text-muted)
 }
 .free-writing-html-card-site-icon {
     object-fit: contain !important;
-    height: 15px !important;
+    height: 1em !important;
+    margin-right: 0.2em
 }
 
 .free-writing-html-card-body {
