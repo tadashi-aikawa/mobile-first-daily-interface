@@ -35,12 +35,14 @@ If your plugin does not need CSS, delete this file.
     border: 1px dotted #b5890077;
     backdrop-filter: brightness(101%);
     margin-bottom: 1em;
-    border-radius: 8px;
+    border-radius: 16px;
 }
 
 .free-writing-html-card-image {
     width: 100% !important;
     object-fit: contain !important;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
 }
 
 .free-writing-html-card a {
@@ -86,7 +88,6 @@ If your plugin does not need CSS, delete this file.
     margin-bottom: 0.5em;
 }
 
-
 .free-writing-image-card {
     position: relative;
     z-index: 1;
@@ -97,4 +98,5 @@ If your plugin does not need CSS, delete this file.
 .free-writing-image-card-image {
     width: 100% !important;
     object-fit: contain !important;
+    border-radius: 16px;
 }
