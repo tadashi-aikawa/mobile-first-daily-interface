@@ -44,10 +44,6 @@ function getCoverUrl(dom: Document): string | undefined {
   );
 }
 
-function isSecure(url: string): boolean {
-  return Boolean(url && !url.startsWith("http://"));
-}
-
 export type Meta = HTMLMeta | ImageMeta;
 export interface HTMLMeta {
   type: "html";
@@ -65,7 +61,7 @@ export interface ImageMeta {
 }
 
 export async function createMeta(url: string): Promise<Meta | null> {
-  const res = await requestUrl({ url });
+  const res = await requestUrl({ url, headers: { "User-Agent": "bot" } });
   if (res.status >= 400) {
     console.debug(`status is ${res.status}`);
     return null;
