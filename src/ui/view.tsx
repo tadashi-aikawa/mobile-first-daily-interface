@@ -6,6 +6,9 @@ import { AppHelper } from "../app-helper";
 
 export const VIEW_TYPE_FREE_WRITING = "free-writing-view";
 
+// Why private?
+type IconName = string;
+
 export class FreeWritingView extends ItemView {
   root: Root;
   appHelper: AppHelper;
@@ -13,6 +16,10 @@ export class FreeWritingView extends ItemView {
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
     this.appHelper = new AppHelper(this.app);
+  }
+
+  getIcon(): IconName {
+    return "pencil";
   }
 
   getViewType() {
