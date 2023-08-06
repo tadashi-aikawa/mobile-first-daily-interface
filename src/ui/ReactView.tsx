@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Flex, HStack, Textarea } from "@chakra-ui/react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Box, Button, Flex, HStack, Input, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
@@ -14,6 +14,7 @@ import {
   CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ExternalLinkIcon,
 } from "@chakra-ui/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Moment } from "moment";
@@ -85,7 +86,7 @@ ${input}
     setTasks((await appHelper.getTasks(note)) ?? []);
   };
 
-  const handleClickDate = async () => {
+  const handleClickOpenDailyNote = async () => {
     if (!currentDailyNote) {
       new Notice("デイリーノートが存在しなかったので新しく作成しました");
       await createDailyNote(date);
@@ -97,6 +98,11 @@ ${input}
     await app.workspace
       .getLeaf(true)
       .openFile(getDailyNote(date, getAllDailyNotes()));
+  };
+  const handleChangeCalendarDate = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setDate(moment(event.target.value));
   };
   const handleClickMovePrevious = () => {
     setDate(date.clone().subtract(1, "day"));
@@ -241,14 +247,45 @@ ${input}
   );
 
   return (
-    <Flex flexDirection="column" gap="0.75rem" height="95%" maxWidth="30rem">
+    <Flex
+      flexDirection="column"
+      gap="0.75rem"
+      height="95%"
+      maxWidth="30rem"
+      position={"relative"}
+    >
       <HStack justify="center">
-        <ChevronLeftIcon cursor="pointer" onClick={handleClickMovePrevious} />
-        <Box cursor="pointer" onClick={handleClickDate}>
-          {replaceDayToJa(date.format("YYYY-MM-DD(ddd)"))}
+        <ChevronLeftIcon
+          boxSize="1.5em"
+          cursor="pointer"
+          onClick={handleClickMovePrevious}
+        />
+        <Box textAlign={"center"}>
+          <Input
+            size="md"
+            type="date"
+            value={date.format("YYYY-MM-DD")}
+            onChange={handleChangeCalendarDate}
+            width={"9em"}
+          />
+          <Box as="span" marginLeft={"0.2em"} fontSize={"95%"}>
+            {replaceDayToJa(date.format("(ddd)"))}
+          </Box>
         </Box>
-        <ChevronRightIcon cursor="pointer" onClick={handleClickMoveNext} />
+        <ChevronRightIcon
+          boxSize="1.5em"
+          cursor="pointer"
+          onClick={handleClickMoveNext}
+        />
       </HStack>
+      <Box position="absolute" right={0}>
+        <ExternalLinkIcon
+          boxSize="1.25em"
+          cursor="pointer"
+          onClick={handleClickOpenDailyNote}
+        />
+      </Box>
+
       <Textarea
         placeholder={asTask ? "タスクを入力" : "思ったことなどを記入"}
         value={input}
