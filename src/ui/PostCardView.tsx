@@ -51,7 +51,12 @@ export const PostCardView = ({
       boxShadow={"0 1px 1px 0"}
       marginY={8}
     >
-      <Box fontSize={"85%"} paddingX={16} className="markdown-rendered">
+      <Box
+        fontSize={"85%"}
+        paddingX={16}
+        wordBreak={"break-all"}
+        className="markdown-rendered"
+      >
         <Markdown gfm breaks>
           {codeBlock.code}
         </Markdown>
