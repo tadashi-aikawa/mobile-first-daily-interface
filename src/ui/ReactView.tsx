@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Box, Button, Flex, HStack, Input, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
 import { AppHelper, CodeBlock, Task } from "../app-helper";
@@ -8,6 +8,7 @@ import {
   createDailyNote,
   getAllDailyNotes,
   getDailyNote,
+  getDailyNoteSettings,
 } from "obsidian-daily-notes-interface";
 import {
   ChatIcon,
@@ -26,21 +27,26 @@ export const ReactView = ({ app }: { app: App }) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
 
   const [date, setDate] = useState<Moment>(moment());
+  // デイリーノートが存在しないとnull
+  const [currentDailyNote, setCurrentDailyNote] = useState<TFile | null>(null);
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState<CodeBlock[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
   const canSubmit = useMemo(() => input.length > 0, [input]);
 
-  const currentDailyNote = useMemo(
-    () => getDailyNote(date, getAllDailyNotes()) as TFile | null,
-    [date]
-  );
-  const currentDailyNoteRef = useRef(currentDailyNote);
+  const updateCurrentDailyNote = () => {
+    const n = getDailyNote(date, getAllDailyNotes()) as TFile | null;
+    if (n?.path !== currentDailyNote?.path) {
+      setCurrentDailyNote(n);
+    }
+  };
 
   useEffect(() => {
-    currentDailyNoteRef.current = currentDailyNote;
+    updateCurrentDailyNote();
+  }, [date]);
 
+  useEffect(() => {
     if (!currentDailyNote) {
       return;
     }
@@ -134,16 +140,25 @@ ${input}
     const eventRef = app.metadataCache.on(
       "changed",
       async (file, data, cache) => {
-        if (file.path !== currentDailyNoteRef.current?.path) {
+        // currentDailyNoteが存在してパスが異なるなら、違う日なので更新は不要
+        if (currentDailyNote != null && file.path !== currentDailyNote.path) {
+          return;
+        }
+        // 変更対象がDaily Noteでなければ関係ないので更新は不要
+        // getDailyNoteSettings()の処理時間の方が長そうなので、1番目の分岐ではない
+        if (file.parent?.path !== getDailyNoteSettings().folder) {
           return;
         }
 
+        // 同期などで裏でDaily Noteが作成されたときに更新する
+        updateCurrentDailyNote();
         await Promise.all([updatePosts(file), updateTasks(file)]);
       }
     );
 
     const deleteEventRef = app.vault.on("delete", async (file) => {
-      if (file.path !== currentDailyNoteRef.current?.path) {
+      // currentDailyNoteとは別のファイルなら関係ない
+      if (file.path !== currentDailyNote?.path) {
         return;
       }
 
@@ -157,7 +172,7 @@ ${input}
       app.metadataCache.offref(eventRef);
       app.vault.offref(deleteEventRef);
     };
-  }, []);
+  }, [date, currentDailyNote]);
 
   const updateTaskChecked = async (task: Task, checked: boolean) => {
     if (!currentDailyNote) {
