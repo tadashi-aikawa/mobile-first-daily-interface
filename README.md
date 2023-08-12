@@ -3,9 +3,6 @@
 [![release](https://img.shields.io/github/release/tadashi-aikawa/mobile-first-daily-interface.svg)](https://github.com/tadashi-aikawa/mobile-first-daily-interface/releases/latest)
 ![downloads](https://img.shields.io/github/downloads/tadashi-aikawa/mobile-first-daily-interface/total)
 
-![demo](https://raw.githubusercontent.com/tadashi-aikawa/mobile-first-daily-interface/master/demo2.gif)
-
-
 [Obsidian]にてモバイルに最適なインターフェースでデイリーノートを扱うプラグインです。
 
 - SNSやチャットツールのようなUI
