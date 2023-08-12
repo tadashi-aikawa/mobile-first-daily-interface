@@ -2,7 +2,7 @@ import { Plugin, View } from "obsidian";
 import { AppHelper } from "./app-helper";
 import { MFDIView, VIEW_TYPE_MFDI } from "./ui/MDFIView";
 
-export default class FreeWritingPlugin extends Plugin {
+export default class MFDIPlugin extends Plugin {
   appHelper: AppHelper;
 
   async onload() {
