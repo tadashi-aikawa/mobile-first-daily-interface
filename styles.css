@@ -29,7 +29,7 @@ If your plugin does not need CSS, delete this file.
 /* card link
 /************************/
 
-.free-writing-html-card {
+.mfdi-html-card {
   position: relative;
   z-index: 1;
   border: 1px dotted #b5890077;
@@ -38,14 +38,14 @@ If your plugin does not need CSS, delete this file.
   border-radius: 16px;
 }
 
-.free-writing-html-card-image {
+.mfdi-html-card-image {
   width: 100% !important;
   object-fit: contain !important;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
 }
 
-.free-writing-html-card a {
+.mfdi-html-card a {
   position: absolute;
   top: 0;
   left: 0;
@@ -55,43 +55,43 @@ If your plugin does not need CSS, delete this file.
   z-index: 2;
 }
 
-.free-writing-html-card:hover {
+.mfdi-html-card:hover {
   cursor: pointer;
   border: 1px solid #b58900;
   backdrop-filter: brightness(98%);
   transition: backdrop-filter 0.2s;
 }
 
-.free-writing-html-card-content {
+.mfdi-html-card-content {
   padding: 1em;
 }
 
-.free-writing-html-card-header {
+.mfdi-html-card-header {
   margin-bottom: 0.5em;
   /*noinspection CssUnresolvedCustomProperty*/
   color: var(--text-muted);
 }
-.free-writing-html-card-site-icon {
+.mfdi-html-card-site-icon {
   object-fit: contain !important;
   height: 1em !important;
   margin-right: 0.3em;
 }
-.free-writing-html-card-site-name {
+.mfdi-html-card-site-name {
   height: 1em !important;
 }
 
-.free-writing-html-card-body {
+.mfdi-html-card-body {
   margin-bottom: 0.5em;
 }
 
-.free-writing-image-card {
+.mfdi-image-card {
   position: relative;
   z-index: 1;
   backdrop-filter: brightness(101%);
   margin-bottom: 1em;
 }
 
-.free-writing-image-card-image {
+.mfdi-image-card-image {
   width: 100% !important;
   object-fit: contain !important;
   border-radius: 16px;

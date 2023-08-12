@@ -1,12 +1,12 @@
-# Obsidian Free Writing Plugin
+# Mobile First Daily Interface (MFDI)
 
-[![release](https://img.shields.io/github/release/tadashi-aikawa/obsidian-free-writing.svg)](https://github.com/tadashi-aikawa/obsidian-free-writing/releases/latest)
-![downloads](https://img.shields.io/github/downloads/tadashi-aikawa/obsidian-free-writing/total)
+[![release](https://img.shields.io/github/release/tadashi-aikawa/mobile-first-daily-interface.svg)](https://github.com/tadashi-aikawa/mobile-first-daily-interface/releases/latest)
+![downloads](https://img.shields.io/github/downloads/tadashi-aikawa/mobile-first-daily-interface/total)
 
 ![demo](https://raw.githubusercontent.com/tadashi-aikawa/obsidian-free-writing/master/demo2.gif)
 
 
-[Obsidian]で[フリーライティング]するためのプラグインです。
+[Obsidian]にてモバイルに最適なインターフェースでデイリーノートを扱うプラグインです。
 
 - SNSやチャットツールのようなUI
 - 記録先はデイリーノート
@@ -29,7 +29,7 @@
 
 ## ⏬インストール
 
-[BRAT]を使って`tadashi-aikawa/obsidian-free-writing`でインストールします。
+[BRAT]を使って`tadashi-aikawa/mobile-first-daily-interface`でインストールします。
 
 ## 対応機能/ロードマップ
 
@@ -43,10 +43,7 @@
 
 ## FAQ
 
-> **Warning**
-> Free Writingの方向性が変わってきたのでFAQの回答が若干怪しくなってきました... 近いうちにプラグイン名を変更して1.0をリリース予定ですので、そのときにまた刷新します。
-
-### なぜFree Writingを作ったのか?
+### なぜMFDIを作ったのか?
 
 [Obsidian Memos]を使わず、自作した背景には動作速度の問題があります。
 
@@ -59,15 +56,14 @@
 
 [Obsidian Memos]と一番異なるのは、**1度に1日分のデイリーノートしか読み込まない**点です。そのため、表示速度が速く、メモリ使用量が小さくなり、性能の悪い端末や大きなVaultでの利用に適しています。
 
-また、[Obsidian Memos]に比べて全体的に機能は少ないです。これはFree Writingの目的が[フリーライティング]のサポートであり、SNSやチャットアプリケーションなどの再現ではないからです。
+また、タスク管理などデイリーに関連する機能は積極的にサポートしていく予定です。
 
 ### 投稿を編集/削除したい場合は?
 
-デイリーノートを直接編集してください。[フリーライティング]の性質上、ただちに修正や削除が必要になる機会は少ないと思います。
+デイリーノートを直接編集してください。
 
 
 [Obsidian]: https://obsidian.md/
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
-[フリーライティング]: https://en.wikipedia.org/wiki/Free_writing
 [Obsidian Memos]: https://github.com/Quorafind/Obsidian-Memos
 [コミュニティプラグイン]: https://help.obsidian.md/Advanced+topics/Community+plugins
