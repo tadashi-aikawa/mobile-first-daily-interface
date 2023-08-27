@@ -17,15 +17,15 @@ export default class MFDIPlugin extends Plugin {
   private init() {
     // UIなどの登録系はここ
     this.registerView(VIEW_TYPE_MFDI, (leaf) => new MFDIView(leaf));
-    this.addRibbonIcon("pencil", "Mobile First Daily Interface", () => {
-      this.activateView();
+    this.addRibbonIcon("pencil", "Mobile First Daily Interface", async () => {
+      await this.activateView();
     });
   }
 
   async activateView() {
     this.app.workspace.detachLeavesOfType(VIEW_TYPE_MFDI);
 
-    await this.app.workspace.getActiveViewOfType(View)?.leaf.setViewState({
+    await this.app.workspace.getLeftLeaf(false).setViewState({
       type: VIEW_TYPE_MFDI,
       active: true,
     });
