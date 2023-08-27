@@ -31,6 +31,8 @@
 
 [BRAT]を使って`tadashi-aikawa/mobile-first-daily-interface`でインストールします。
 
+起動後に左リーフ(サイドバー)に鉛筆マークのアイコンが出現します。それをクリックするとMFDIのviewが表示されます。
+
 ## 対応機能/ロードマップ
 
 - [x] メッセージの投稿
