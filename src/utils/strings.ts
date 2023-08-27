@@ -1,4 +1,5 @@
 import { RegExpMatchedArray } from "./types";
+import * as Encoding from "encoding-japanese";
 
 export function excludeWikiLink(text: string): string {
   return text
@@ -27,4 +28,12 @@ export function pickUrls(str: string): string[] {
     str.matchAll(/(^| |\(|\n)(?<url>https?:\/\/[^ )\n]+)/g)
   ) as RegExpMatchedArray[];
   return urlsMatches.map((x) => x.groups.url);
+}
+
+export function sjis2String(sjisBuffer: ArrayBuffer): string {
+  const unicodeArray = Encoding.convert(new Uint8Array(sjisBuffer), {
+    from: "SJIS",
+    to: "UNICODE",
+  });
+  return Encoding.codeToString(unicodeArray);
 }

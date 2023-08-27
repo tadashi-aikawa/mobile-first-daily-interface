@@ -13,6 +13,15 @@ export function getMetaByName(dom: Document, name: string): string | undefined {
     ?.attributes.getNamedItem("content")?.value;
 }
 
+export function getMetaByHttpEquiv(
+  dom: Document,
+  httpEquiv: string
+): string | undefined {
+  return dom
+    .querySelector(`meta[http-equiv='${httpEquiv}']`)
+    ?.attributes.getNamedItem("content")?.value;
+}
+
 export function getSrcById(dom: Document, id: string): string | undefined {
   return dom.querySelector("#" + id)?.attributes.getNamedItem("src")?.value;
 }

@@ -3,9 +3,11 @@ import { forceLowerCaseKeys } from "./collections";
 import {
   getCoverUrl,
   getFaviconUrl,
+  getMetaByHttpEquiv,
   getMetaByName,
   getMetaByProperty,
 } from "./meta-helper";
+import { sjis2String } from "./strings";
 
 export type Meta = HTMLMeta | ImageMeta | TwitterMeta;
 export interface HTMLMeta {
@@ -78,7 +80,17 @@ export async function createMeta(url: string): Promise<Meta | null> {
     console.debug(`content-type is ${contentType}`);
     return null;
   }
-  const html = new DOMParser().parseFromString(res.text, "text/html");
+  let html = new DOMParser().parseFromString(res.text, "text/html");
+
+  const httpEquivContentType = getMetaByHttpEquiv(html, "content-type");
+  console.log(httpEquivContentType);
+  if (httpEquivContentType?.toLowerCase().includes("shift_jis")) {
+    // HTMLのmetaデータにshift_jisと明記されている場合はbodyを作り直す
+    html = new DOMParser().parseFromString(
+      sjis2String(res.arrayBuffer),
+      "text/html"
+    );
+  }
 
   const siteName = getMetaByProperty(html, "og:site_name") ?? new URL(url).host;
   const title =
