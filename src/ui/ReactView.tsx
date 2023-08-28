@@ -144,10 +144,15 @@ ${input}
         if (currentDailyNote != null && file.path !== currentDailyNote.path) {
           return;
         }
-        // 変更対象がDaily Noteでなければ関係ないので更新は不要
-        // getDailyNoteSettings()の処理時間の方が長そうなので、1番目の分岐ではない
-        if (file.parent?.path !== getDailyNoteSettings().folder) {
-          return;
+
+        if (currentDailyNote == null) {
+          const ds = getDailyNoteSettings();
+          const dir = ds.folder ? `${ds.folder}/` : "";
+          const entry = date.format(ds.format);
+          // 更新されたファイルがcurrentDailyNoteになるべきファイルではなければ処理は不要
+          if (file.path !== `${dir}${entry}.md`) {
+            return;
+          }
         }
 
         // 同期などで裏でDaily Noteが作成されたときに更新する
