@@ -31,7 +31,12 @@
 
 [BRAT]を使って`tadashi-aikawa/mobile-first-daily-interface`でインストールします。
 
-起動後に左リーフ(サイドバー)に鉛筆マークのアイコンが出現します。それをクリックするとMFDIのviewが表示されます。
+## 起動方法
+
+- メインのタブに表示する場合
+    - リボンメニューの『Mobile First Daily Interface』という鉛筆マークをクリック
+- レフトリーフ(左サイドバー)に表示する場合
+    - レフトリーフの『Mobile First Daily Interface』という鉛筆マークをクリック
 
 ## 対応機能/ロードマップ
 
@@ -41,6 +46,7 @@
 - [x] タスクの追加・完了/未完了の切り替え
 - [x] デイリーノートの自動生成
 - [x] カレンダーUI
+- [x] サイドリーフ表示
 - [ ] タイムラインの時刻昇順表示
 
 ## FAQ
@@ -63,6 +69,35 @@
 ### 投稿を編集/削除したい場合は?
 
 デイリーノートを直接編集してください。
+
+## その他
+
+Mobile First Daily Interfaceに関するブログ記事もご覧ください。
+
+<div class="link-card">
+	<div class="link-card-header">
+		<img src="https://publish-01.obsidian.md/access/35d05cd1bf5cc500e11cc8ba57daaf88/favicon-64.png" class="link-card-site-icon"/>
+		<span class="link-card-site-name">minerva.mamansoft.net</span>
+	</div>
+	<div class="link-card-body">
+		<div class="link-card-content">
+			<div>
+				<p class="link-card-title">📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ</p>
+			</div>
+			<div class="link-card-description">
+Obsidian Memosの影響を受けて、🦉Mobile First Daily InterfaceというObsidianプラグインを作りました。
+本記事では🦉Mobile First Daily Interfaceについて、なぜ作ったのか? 何ができるのか? どう使うのか? を紹介します。
+			</div>
+		</div>
+		<img src="https://publish-01.obsidian.md/access/35d05cd1bf5cc500e11cc8ba57daaf88/%F0%9F%93%98Articles/attachments/2023-08-25.jpg" class="link-card-image" />
+	</div>
+	
+    <a
+      class="internal-link"
+      data-href="📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ"
+    ></a>
+  
+</div>
 
 
 [Obsidian]: https://obsidian.md/
