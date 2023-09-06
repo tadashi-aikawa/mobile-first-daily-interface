@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Plugin, View } from "obsidian";
 import { AppHelper } from "./app-helper";
 import { MFDIView, VIEW_TYPE_MFDI } from "./ui/MDFIView";
 
@@ -10,6 +10,12 @@ export default class MFDIPlugin extends Plugin {
 
     this.app.workspace.onLayoutReady(async () => {
       await this.activateView();
+    });
+    this.addRibbonIcon("pencil", "Mobile First Daily Interface", async () => {
+      await this.app.workspace.getActiveViewOfType(View)?.leaf.setViewState({
+        type: VIEW_TYPE_MFDI,
+        active: false,
+      });
     });
   }
 

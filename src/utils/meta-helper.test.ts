@@ -8,7 +8,7 @@ describe("getFaviconUrl", () => {
     ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                               | ${"https://eslint.org/favicon.ico"}
     ${"GitHub"}   | ${"https://github.com/tadashi-aikawa/obsidian-another-quick-switcher"}                  | ${"https://github.githubassets.com/favicons/favicon.svg"}
     ${"voicy"}    | ${"https://voicy.jp/channel/1380/459280"}                                               | ${"https://voicy.jp/favicon.ico"}
-    ${"Zenn"}     | ${"https://zenn.dev/estra/books/obsidian-dot-zenn"}                                     | ${"https://zenn.dev/images/logo-transparent.png"}
+    ${"Zenn"}     | ${"https://zenn.dev/estra/books/obsidian-dot-zenn"}                                     | ${"https://static.zenn.studio/images/logo-transparent.png"}
     ${"Qiita"}    | ${"https://qiita.com/ugr0/items/514dcab4275aa74f3add"}                                  | ${"https://cdn.qiita.com/assets/favicons/public/production-c620d3e403342b1022967ba5e3db1aaa.ico"}
     ${"Cargo"}    | ${"https://doc.rust-lang.org/cargo/reference/publishing.html"}                          | ${"https://doc.rust-lang.org/cargo/favicon.png"}
     ${"GIGAZINE"} | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${"https://gigazine.net/favicon.ico"}
