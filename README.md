@@ -74,30 +74,7 @@
 
 Mobile First Daily Interfaceに関するブログ記事もご覧ください。
 
-<div class="link-card">
-	<div class="link-card-header">
-		<img src="https://publish-01.obsidian.md/access/35d05cd1bf5cc500e11cc8ba57daaf88/favicon-64.png" class="link-card-site-icon"/>
-		<span class="link-card-site-name">minerva.mamansoft.net</span>
-	</div>
-	<div class="link-card-body">
-		<div class="link-card-content">
-			<div>
-				<p class="link-card-title">📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ</p>
-			</div>
-			<div class="link-card-description">
-Obsidian Memosの影響を受けて、🦉Mobile First Daily InterfaceというObsidianプラグインを作りました。
-本記事では🦉Mobile First Daily Interfaceについて、なぜ作ったのか? 何ができるのか? どう使うのか? を紹介します。
-			</div>
-		</div>
-		<img src="https://publish-01.obsidian.md/access/35d05cd1bf5cc500e11cc8ba57daaf88/%F0%9F%93%98Articles/attachments/2023-08-25.jpg" class="link-card-image" />
-	</div>
-	
-    <a
-      class="internal-link"
-      data-href="📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ"
-    ></a>
-  
-</div>
+[📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ \- Minerva](https://minerva.mamansoft.net/%F0%9F%93%98Articles/%F0%9F%93%98Obsidian+Memos+%E3%81%BF%E3%81%9F%E3%81%84%E3%81%AA%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3+Mobile+First+Daily+Interface%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%9F%E3%83%AF%E3%82%B1)
 
 
 [Obsidian]: https://obsidian.md/
