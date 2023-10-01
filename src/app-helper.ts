@@ -93,16 +93,14 @@ export class AppHelper {
 
   async getTasks(file: TFile): Promise<Task[] | null> {
     const content = await this.loadFile(file.path);
+    const lines = content.split("\n");
 
     return (
       this.unsafeApp.metadataCache
         .getFileCache(file)
         ?.listItems?.filter((x) => x.task != null)
         .map((x) => {
-          const text = content.slice(
-            x.position.start.offset,
-            x.position.end.offset
-          );
+          const text = lines.at(x.position.start.line)!;
           const name = pickTaskName(text);
           return {
             mark: x.task!,

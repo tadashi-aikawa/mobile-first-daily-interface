@@ -8,8 +8,18 @@ export function excludeWikiLink(text: string): string {
 }
 
 export function pickTaskName(text: string): string {
-  return text.matchAll(/[-*] \[(?<mark>[^\]]+)] +(?<name>.+)/g).next().value
-    .groups.name as string;
+  return parseMarkdownList(text).content;
+}
+
+export function parseMarkdownList(text: string): {
+  prefix: string;
+  content: string;
+} {
+  const { groups } = Array.from(
+    text.matchAll(/^(?<prefix> *([-*] (\[.] |)|))(?<content>.*)$/g)
+  ).at(0) as any;
+
+  return { prefix: groups.prefix, content: groups.content };
 }
 
 export function replaceDayToJa(text: string): string {
