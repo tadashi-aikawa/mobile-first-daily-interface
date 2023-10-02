@@ -5,7 +5,7 @@ describe("getFaviconUrl", () => {
   test.concurrent.each`
     name          | url                                                                                     | expected
     ${"mockito"}  | ${"https://site.mockito.org/"}                                                          | ${"https://site.mockito.org/favicon.ico"}
-    ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                               | ${"https://eslint.org/favicon.ico"}
+    ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                               | ${"https://eslint.org/icon.svg"}
     ${"GitHub"}   | ${"https://github.com/tadashi-aikawa/obsidian-another-quick-switcher"}                  | ${"https://github.githubassets.com/favicons/favicon.svg"}
     ${"voicy"}    | ${"https://voicy.jp/channel/1380/459280"}                                               | ${"https://voicy.jp/favicon.ico"}
     ${"Zenn"}     | ${"https://zenn.dev/estra/books/obsidian-dot-zenn"}                                     | ${"https://static.zenn.studio/images/logo-transparent.png"}
