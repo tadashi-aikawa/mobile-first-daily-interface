@@ -27,12 +27,13 @@ export function getSrcById(dom: Document, id: string): string | undefined {
 }
 
 export function getFaviconUrl(dom: Document, url: string): string {
+  const toIconHref = (selector: string) =>
+    dom.querySelector(selector)?.attributes.getNamedItem("href")?.value;
+
   let iconHref =
-    dom.querySelector("link[rel='icon']")?.attributes.getNamedItem("href")
-      ?.value ??
-    dom
-      .querySelector("link[rel='shortcut icon']")
-      ?.attributes.getNamedItem("href")?.value;
+    toIconHref("link[rel~='icon'][href$='.svg']") ??
+    toIconHref("link[rel~='icon'][href$='.png']") ??
+    toIconHref("link[rel~='icon'][href$='.ico']");
   if (!iconHref) {
     return new URL("/favicon.ico", url).toString();
   }
