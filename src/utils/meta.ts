@@ -40,8 +40,13 @@ function defineUserAgent(url: string): string {
   return "bot";
 }
 
-async function getTwitterMeta(url: string): Promise<TwitterMeta | null> {
-  const twitterEmbedUrl = `https://publish.twitter.com/oembed?hide_media=true&hide_thread=true&omit_script=true&lang=ja&url=${url}`;
+async function getTwitterMeta(
+  url: string,
+  type: "X" | "Twitter"
+): Promise<TwitterMeta | null> {
+  const twitterEmbedUrl = `https://publish.${
+    type === "X" ? "x" : "twitter"
+  }.com/oembed?hide_media=true&hide_thread=true&omit_script=true&lang=ja&url=${url}`;
   const res = await requestUrl({
     url: twitterEmbedUrl,
     headers: { "User-Agent": defineUserAgent(twitterEmbedUrl) },
@@ -55,8 +60,14 @@ async function getTwitterMeta(url: string): Promise<TwitterMeta | null> {
 }
 
 export async function createMeta(url: string): Promise<Meta | null> {
-  if (url.startsWith("https://twitter.com")) {
-    const res = await getTwitterMeta(url);
+  if (
+    url.startsWith("https://twitter.com") ||
+    url.startsWith("https://x.com")
+  ) {
+    const res = await getTwitterMeta(
+      url,
+      url.startsWith("https://x.com") ? "X" : "Twitter"
+    );
     if (!res) {
       return null;
     }
