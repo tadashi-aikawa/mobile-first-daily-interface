@@ -34,9 +34,9 @@
 ## 起動方法
 
 - メインのタブに表示する場合
-    - リボンメニューの『Mobile First Daily Interface』という鉛筆マークをクリック
+  - リボンメニューの『Mobile First Daily Interface』という鉛筆マークをクリック
 - レフトリーフ(左サイドバー)に表示する場合
-    - レフトリーフの『Mobile First Daily Interface』という鉛筆マークをクリック
+  - レフトリーフの『Mobile First Daily Interface』という鉛筆マークをクリック
 
 ## 対応機能/ロードマップ
 
