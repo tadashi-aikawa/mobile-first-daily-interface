@@ -31,11 +31,20 @@ export interface TwitterMeta {
   html: string;
 }
 
+// botでないとOGPがとれないサイト VS botだと攻撃と勘違いしてブロックされるサイト の両方に対応
+function defineUserAgent(url: string): string {
+  if (url.startsWith("https://gigazine.net")) {
+    return "MFDI";
+  }
+
+  return "bot";
+}
+
 async function getTwitterMeta(url: string): Promise<TwitterMeta | null> {
   const twitterEmbedUrl = `https://publish.twitter.com/oembed?hide_media=true&hide_thread=true&omit_script=true&lang=ja&url=${url}`;
   const res = await requestUrl({
     url: twitterEmbedUrl,
-    headers: { "User-Agent": "bot" },
+    headers: { "User-Agent": defineUserAgent(twitterEmbedUrl) },
   });
   if (res.status >= 400) {
     console.debug(`twitter embed status is ${res.status}`);
@@ -60,7 +69,10 @@ export async function createMeta(url: string): Promise<Meta | null> {
     };
   }
 
-  const res = await requestUrl({ url, headers: { "User-Agent": "bot" } });
+  const res = await requestUrl({
+    url,
+    headers: { "User-Agent": defineUserAgent(url) },
+  });
   if (res.status >= 400) {
     console.debug(`status is ${res.status}`);
     return null;
