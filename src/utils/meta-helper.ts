@@ -33,7 +33,8 @@ export function getFaviconUrl(dom: Document, url: string): string {
   let iconHref =
     toIconHref("link[rel~='icon'][href$='.svg']") ??
     toIconHref("link[rel~='icon'][href$='.png']") ??
-    toIconHref("link[rel~='icon'][href$='.ico']");
+    toIconHref("link[rel~='icon'][href$='.ico']") ??
+    toIconHref("link[rel~='icon']");
   if (!iconHref) {
     return new URL("/favicon.ico", url).toString();
   }
