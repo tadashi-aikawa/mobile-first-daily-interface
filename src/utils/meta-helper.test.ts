@@ -1,5 +1,11 @@
 import { JSDOM } from "jsdom";
-import { getCoverUrl, getFaviconUrl, getMetaByHttpEquiv } from "./meta-helper";
+import { defineUserAgent } from "./agent";
+import {
+  getCharsetFromMeta,
+  getCoverUrl,
+  getFaviconUrl,
+  getMetaByHttpEquiv,
+} from "./meta-helper";
 
 describe("getFaviconUrl", () => {
   test.concurrent.each`
@@ -44,10 +50,25 @@ describe("getMetaByHttpEquiv", () => {
     httpEquiv          | url                                                                                     | expected
     ${"content-type"}  | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${undefined}
     ${"content-type"}  | ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}                       | ${"text/html;charset=shift_jis"}
+    ${"content-type"}  | ${"https://www.itmedia.co.jp/pcuser/spv/2310/18/news078.html"}                       | ${undefined}
   `(`getMetaByHttpEquiv: $httpEquiv`, async ({ httpEquiv, url, expected }) => {
     const textResponse = await (await fetch(url)).text();
     expect(
       getMetaByHttpEquiv(new JSDOM(textResponse).window.document, httpEquiv)
     ).toBe(expected);
+  });
+});
+
+describe("getCharsetFromMeta", () => {
+  test.concurrent.each`
+     url                                                                                     | expected
+     ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${"utf-8"}
+     ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}                       | ${undefined}
+     ${"https://www.itmedia.co.jp/pcuser/spv/2310/18/news078.html"}                       | ${"shift_jis"}
+  `(`getCharsetFromMeta`, async ({ url, expected }) => {
+    const textResponse = await (await fetch(url)).text();
+    expect(getCharsetFromMeta(new JSDOM(textResponse).window.document)).toBe(
+      expected
+    );
   });
 });

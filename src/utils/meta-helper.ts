@@ -13,6 +13,11 @@ export function getMetaByName(dom: Document, name: string): string | undefined {
     ?.attributes.getNamedItem("content")?.value;
 }
 
+export function getCharsetFromMeta(dom: Document): string | undefined {
+  return dom.querySelector(`meta[charset]`)?.attributes.getNamedItem("charset")
+    ?.value;
+}
+
 export function getMetaByHttpEquiv(
   dom: Document,
   httpEquiv: string

@@ -1,6 +1,8 @@
 import { requestUrl } from "obsidian";
+import { defineUserAgent } from "./agent";
 import { forceLowerCaseKeys } from "./collections";
 import {
+  getCharsetFromMeta,
   getCoverUrl,
   getFaviconUrl,
   getMetaByHttpEquiv,
@@ -29,15 +31,6 @@ export interface TwitterMeta {
   url: string;
   author_name: string;
   html: string;
-}
-
-// botでないとOGPがとれないサイト VS botだと攻撃と勘違いしてブロックされるサイト の両方に対応
-function defineUserAgent(url: string): string {
-  if (url.startsWith("https://gigazine.net")) {
-    return "MFDI";
-  }
-
-  return "bot";
 }
 
 async function getTwitterMeta(
@@ -105,8 +98,15 @@ export async function createMeta(url: string): Promise<Meta | null> {
   }
   let html = new DOMParser().parseFromString(res.text, "text/html");
 
-  const httpEquivContentType = getMetaByHttpEquiv(html, "content-type");
-  if (httpEquivContentType?.toLowerCase().includes("shift_jis")) {
+  const metaContentType = getCharsetFromMeta(html)?.toLowerCase();
+  const httpEquivContentType = getMetaByHttpEquiv(
+    html,
+    "content-type"
+  )?.toLowerCase();
+  if (
+    metaContentType?.includes("shift_jis") ||
+    httpEquivContentType?.includes("shift_jis")
+  ) {
     // HTMLのmetaデータにshift_jisと明記されている場合はbodyを作り直す
     html = new DOMParser().parseFromString(
       sjis2String(res.arrayBuffer),
