@@ -33,10 +33,34 @@
 
 ## 起動方法
 
-- メインのタブに表示する場合
-  - リボンメニューの『Mobile First Daily Interface』という鉛筆マークをクリック
-- レフトリーフ(左サイドバー)に表示する場合
-  - レフトリーフの『Mobile First Daily Interface』という鉛筆マークをクリック
+[リボン]の『Mobile First Daily Interface』という鉛筆マークをクリックしてください。
+
+デフォルトでは左サイドリーフに開かれます。
+
+## 設定
+
+### 表示リーフ
+
+`default: left`
+
+MFDI Viewを表示するリーフを指定します。
+
+| 設定値  | 意味                               |
+| ------- | ---------------------------------- |
+| left    | 左サイドリーフに表示します         |
+| right   | 右サイドリーフに表示します         |
+| current | **現在選択中のリーフ**に表示します |
+
+### Obsidian起動時に自動起動・アクティブにする
+
+`default: false`
+
+有効にすると、Obsidian起動時にMFDIが立ち上がります。
+
+- 1つ以上のMFDI Viewが存在する場合
+    - 最初の1つをアクティブにします (**[表示リーフ]の設定は考慮しません**)
+- MFDI Viewが存在しない場合
+    - [表示リーフ]の設定に従い、Viewを新規作成してアクティブにします
 
 ## 対応機能/ロードマップ
 
@@ -47,6 +71,7 @@
 - [x] デイリーノートの自動生成
 - [x] カレンダーUI
 - [x] サイドリーフ表示
+- [x] 自動起動
 - [ ] タイムラインの時刻昇順表示
 
 ## FAQ
@@ -81,3 +106,5 @@ Mobile First Daily Interfaceに関するブログ記事もご覧ください。
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
 [Obsidian Memos]: https://github.com/Quorafind/Obsidian-Memos
 [コミュニティプラグイン]: https://help.obsidian.md/Advanced+topics/Community+plugins
+[表示リーフ]: #表示リーフ
+[リボン]: https://minerva.mamansoft.net/Notes/%E3%83%AA%E3%83%9C%E3%83%B3%20(Obsidian)

@@ -23,3 +23,10 @@ export function forceLowerCaseKeys(obj: { [key: string]: any }): {
     Object.entries(obj).map(([key, value]) => [key.toLowerCase(), value])
   );
 }
+
+export function mirrorMap<T>(
+  collection: T[],
+  toValue: (t: T) => string
+): { [key: string]: string } {
+  return collection.reduce((p, c) => ({ ...p, [toValue(c)]: toValue(c) }), {});
+}
