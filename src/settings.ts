@@ -1,15 +1,20 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import MFDIPlugin from "./main";
 import { mirrorMap } from "./utils/collections";
+import { TextComponentEvent } from "./obsutils/settings";
 
 export interface Settings {
   leaf: string;
   autoStartOnLaunch: boolean;
+  blueskyIdentifier: string;
+  blueskyAppPassword: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   leaf: "left",
   autoStartOnLaunch: false,
+  blueskyIdentifier: "",
+  blueskyAppPassword: "",
 };
 
 const leafOptions = ["left", "current", "right"];
@@ -26,6 +31,8 @@ export class MFDISettingTab extends PluginSettingTab {
     const { containerEl } = this;
 
     containerEl.empty();
+
+    containerEl.createEl("h3", { text: "🌍 全体" });
 
     new Setting(containerEl)
       .setName("表示リーフ")
@@ -52,6 +59,30 @@ export class MFDISettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           }
         );
+      });
+
+    containerEl.createEl("h3", { text: "🦋 Bluesky" });
+
+    new Setting(containerEl).setName("Blueskyのidentifier").addText((cb) => {
+      TextComponentEvent.onChange(cb, async (value) => {
+        this.plugin.settings.blueskyIdentifier = value;
+        await this.plugin.saveSettings();
+      })
+        .setValue(this.plugin.settings.blueskyIdentifier)
+        .setPlaceholder("例: mfdi.bsky.social");
+    });
+
+    new Setting(containerEl)
+      .setName("Blueskyのアプリパスワード")
+      .addText((cb) => {
+        TextComponentEvent.onChange(
+          cb,
+          async (value) => {
+            this.plugin.settings.blueskyAppPassword = value;
+            await this.plugin.saveSettings();
+          },
+          { secret: true }
+        ).setValue(this.plugin.settings.blueskyAppPassword);
       });
   }
 }

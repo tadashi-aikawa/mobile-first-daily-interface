@@ -15,7 +15,10 @@ export default class MFDIPlugin extends Plugin {
     this.settingTab = new MFDISettingTab(this.app, this);
     this.addSettingTab(this.settingTab);
 
-    this.registerView(VIEW_TYPE_MFDI, (leaf) => new MFDIView(leaf));
+    this.registerView(
+      VIEW_TYPE_MFDI,
+      (leaf) => new MFDIView(leaf, this.settings)
+    );
 
     this.app.workspace.onLayoutReady(async () => {
       if (this.settings.autoStartOnLaunch) {

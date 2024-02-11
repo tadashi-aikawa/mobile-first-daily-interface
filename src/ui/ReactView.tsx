@@ -22,8 +22,15 @@ import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
 import { TaskView } from "./TaskView";
 import { replaceDayToJa } from "../utils/strings";
+import { Settings } from "src/settings";
 
-export const ReactView = ({ app }: { app: App }) => {
+export const ReactView = ({
+  app,
+  settings,
+}: {
+  app: App;
+  settings: Settings;
+}) => {
   const appHelper = useMemo(() => new AppHelper(app), [app]);
 
   const [date, setDate] = useState<Moment>(moment());
@@ -258,7 +265,11 @@ ${input}
               timeout={300}
               classNames="item"
             >
-              <PostCardView codeBlock={x} onClickTime={handleClickTime} />
+              <PostCardView
+                codeBlock={x}
+                settings={settings}
+                onClickTime={handleClickTime}
+              />
             </CSSTransition>
           ))}
         </TransitionGroup>

@@ -3,6 +3,7 @@ import * as React from "react";
 import { ReactView } from "./ReactView";
 import { createRoot, Root } from "react-dom/client";
 import { AppHelper } from "../app-helper";
+import { Settings } from "src/settings";
 
 export const VIEW_TYPE_MFDI = "mfdi-view";
 
@@ -12,10 +13,12 @@ type IconName = string;
 export class MFDIView extends ItemView {
   root: Root;
   appHelper: AppHelper;
+  settings: Settings;
 
-  constructor(leaf: WorkspaceLeaf) {
+  constructor(leaf: WorkspaceLeaf, settings: Settings) {
     super(leaf);
     this.appHelper = new AppHelper(this.app);
+    this.settings = settings;
   }
 
   getIcon(): IconName {
@@ -32,7 +35,7 @@ export class MFDIView extends ItemView {
 
   async onOpen() {
     this.root = createRoot(this.containerEl.children[1]);
-    this.root.render(<ReactView app={this.app} />);
+    this.root.render(<ReactView app={this.app} settings={this.settings} />);
   }
 
   async onClose() {
