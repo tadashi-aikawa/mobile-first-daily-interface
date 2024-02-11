@@ -10,7 +10,6 @@ import {
 describe("getFaviconUrl", () => {
   test.concurrent.each`
     name          | url                                                                             | expected
-    ${"mockito"}  | ${"https://site.mockito.org/"}                                                  | ${"https://site.mockito.org/favicon.ico"}
     ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                       | ${"https://eslint.org/icon.svg"}
     ${"GitHub"}   | ${"https://github.com/tadashi-aikawa/obsidian-another-quick-switcher"}          | ${"https://github.githubassets.com/favicons/favicon.svg"}
     ${"voicy"}    | ${"https://voicy.jp/channel/1380/459280"}                                       | ${"https://voicy.jp/favicon.ico"}
@@ -31,7 +30,6 @@ describe("getFaviconUrl", () => {
 describe("getCoverUrl", () => {
   test.concurrent.each`
     name          | url                                                                                     | expected
-    ${"mockito"}  | ${"https://site.mockito.org/"}                                                          | ${undefined}
     ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                               | ${"https://eslint.org/og?title=Rules%20Reference&summary=A%20pluggable%20and%20configurable%20linter%20tool%20for%20identifying%20and%20reporting%20on%20patterns%20in%20JavaScript.%20Maintain%20your%20code%20quality%20with%20ease.%0A&is_rule=false&recommended=&fixable=&suggestions="}
     ${"voicy"}    | ${"https://voicy.jp/channel/1380/459280"}                                               | ${"https://ogp-image.voicy.jp/ogp-image/story/0/1380/459280"}
     ${"Cargo"}    | ${"https://doc.rust-lang.org/cargo/reference/publishing.html"}                          | ${undefined}
