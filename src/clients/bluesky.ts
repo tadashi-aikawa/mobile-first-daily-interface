@@ -1,15 +1,18 @@
 import { BskyAgent } from "@atproto/api";
 import { HTMLMeta } from "../utils/meta";
 import { requestUrl } from "obsidian";
+import { forceLowerCaseKeys } from "src/utils/collections";
 
 function inferContentType(url: string): string | null {
-  if (url.endsWith(".webp")) {
+  const urlBeforeQuery = url.split("?").first()!;
+
+  if (urlBeforeQuery.endsWith(".webp")) {
     return "image/webp";
   }
-  if (url.endsWith(".png")) {
+  if (urlBeforeQuery.endsWith(".png")) {
     return "image/png";
   }
-  if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
+  if (urlBeforeQuery.endsWith(".jpg") || urlBeforeQuery.endsWith(".jpeg")) {
     return "image/jpeg";
   }
 
@@ -22,8 +25,9 @@ async function loadImage(
   return new Promise((resolve, reject) =>
     requestUrl(imageUrl).then(async (res) => {
       const buf = res.arrayBuffer;
-      const contentType =
-        res.headers["content-type"] ?? inferContentType(imageUrl);
+
+      const headers = forceLowerCaseKeys(res.headers);
+      const contentType = headers["content-type"] ?? inferContentType(imageUrl);
       if (!contentType) {
         reject("content-typeが空です");
         return;
