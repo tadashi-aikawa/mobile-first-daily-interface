@@ -47,3 +47,7 @@ export function sjis2String(sjisBuffer: ArrayBuffer): string {
   });
   return Encoding.codeToString(unicodeArray);
 }
+
+export function trimRedundantEmptyLines(text: string): string {
+  return text.replace(/\n{3,}/g, "\n\n").replace(/\n+$/g, "");
+}

@@ -5,14 +5,18 @@ import { Notice } from "obsidian";
 import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon, createIcon } from "@chakra-ui/icons";
-import { pickUrls, replaceDayToJa } from "../utils/strings";
+import {
+  pickUrls,
+  replaceDayToJa,
+  trimRedundantEmptyLines,
+} from "../utils/strings";
 import { createMeta, HTMLMeta, ImageMeta, TwitterMeta } from "../utils/meta";
 import { isPresent } from "../utils/types";
 import { HTMLCard } from "./HTMLCard";
 import { ImageCard } from "./ImageCard";
 import { TwitterCard } from "./TwitterCard";
-import { postToBluesky } from "src/clients/bluesky";
-import { Settings } from "src/settings";
+import { postToBluesky } from "../clients/bluesky";
+import { Settings } from "../settings";
 
 const BlueskyIcon = createIcon({
   displayName: "BlueskyIcon",
@@ -52,7 +56,7 @@ export const PostCardView = ({
 
     const meta = htmlMetas.first();
     const text = meta?.originUrl
-      ? codeBlock.code.replace(meta.originUrl, "")
+      ? trimRedundantEmptyLines(codeBlock.code.replace(meta.originUrl, ""))
       : codeBlock.code;
 
     try {

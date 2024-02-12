@@ -4,6 +4,7 @@ import {
   pickTaskName,
   pickUrls,
   replaceDayToJa,
+  trimRedundantEmptyLines,
 } from "./strings";
 
 describe.each`
@@ -84,5 +85,20 @@ describe.each`
 `("pickUrls", ({ text, expected }) => {
   test(`pickUrls(${text}) = ${expected}`, () => {
     expect(pickUrls(text)).toStrictEqual(expected);
+  });
+});
+
+describe.each`
+  text                 | expected
+  ${"aaa"}             | ${"aaa"}
+  ${"aaa\nbbb"}        | ${"aaa\nbbb"}
+  ${"aaa\n\nbbb"}      | ${"aaa\n\nbbb"}
+  ${"aaa\n\n\nbbb"}    | ${"aaa\n\nbbb"}
+  ${"aaa\nbbb\n"}      | ${"aaa\nbbb"}
+  ${"aaa\nbbb\n\n"}    | ${"aaa\nbbb"}
+  ${"aaa\nbbb\n\nccc"} | ${"aaa\nbbb\n\nccc"}
+`("trimRedundantEmptyLines", ({ text, expected }) => {
+  test(`trimRedundantEmptyLines(${text}) = ${expected}`, () => {
+    expect(trimRedundantEmptyLines(text)).toBe(expected);
   });
 });
