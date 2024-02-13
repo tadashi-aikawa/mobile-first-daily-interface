@@ -72,6 +72,9 @@ describe.each`
   });
 });
 
+// XXX: Markdownは一旦未対応にする
+// ${"[hoge](https://hoge.com)"}                    | ${["https://hoge.com"]}
+// ${"aa [hoge](https://hoge.com) aa"}              | ${["https://hoge.com"]}
 describe.each`
   text                                             | expected
   ${"https://hoge.com"}                            | ${["https://hoge.com"]}
@@ -82,6 +85,8 @@ describe.each`
   ${"aaa\nhttps://hoge.com\nbbb"}                  | ${["https://hoge.com"]}
   ${"aaa https://hoge.com bbb http://fuga.com"}    | ${["https://hoge.com", "http://fuga.com"]}
   ${"aaa\nhttps://hoge.com\nbbb\nhttp://fuga.com"} | ${["https://hoge.com", "http://fuga.com"]}
+  ${"https://hoge.com/hoge/%2F(fuga)hoge"}         | ${["https://hoge.com/hoge/%2F(fuga)hoge"]}
+  ${"https://hoge.com%20(vim)"}                    | ${["https://hoge.com%20(vim)"]}
 `("pickUrls", ({ text, expected }) => {
   test(`pickUrls(${text}) = ${expected}`, () => {
     expect(pickUrls(text)).toStrictEqual(expected);

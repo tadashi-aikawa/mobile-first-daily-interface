@@ -35,7 +35,7 @@ export function replaceDayToJa(text: string): string {
 
 export function pickUrls(str: string): string[] {
   const urlsMatches = Array.from(
-    str.matchAll(/(^| |\(|\n)(?<url>https?:\/\/[^ )\n]+)/g)
+    str.matchAll(/(^| |\(|\n)(?<url>https?:\/\/[^ \n]+)/g)
   ) as RegExpMatchedArray[];
   return urlsMatches.map((x) => x.groups.url);
 }
