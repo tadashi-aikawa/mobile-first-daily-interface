@@ -68,7 +68,7 @@ export async function postToBluesky(
   }
 
   // カバーイメージが取得できたら取得
-  let coverImageData: any | null = null;
+  let coverImageData: any | undefined = undefined;
   if (meta.coverUrl) {
     const { data: imageData, encoding } = await loadImage(meta.coverUrl);
     if (imageData) {
