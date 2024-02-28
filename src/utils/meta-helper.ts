@@ -54,6 +54,8 @@ export function getFaviconUrl(dom: Document, url: string): string {
 
 export function getCoverUrl(dom: Document, url: string): string | undefined {
   const coverHref =
-    getMetaByProperty(dom, "og:image") ?? getSrcById(dom, "ebooksImgBlkFront");
+    getMetaByProperty(dom, "og:image") ??
+    getMetaByName(dom, "og:image") ??
+    getSrcById(dom, "ebooksImgBlkFront");
   return coverHref ? new URL(coverHref, url).toString() : undefined;
 }

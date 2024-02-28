@@ -1,5 +1,4 @@
 import { JSDOM } from "jsdom";
-import { defineUserAgent } from "./agent";
 import {
   getCharsetFromMeta,
   getCoverUrl,
@@ -19,7 +18,7 @@ describe("getFaviconUrl", () => {
     ${"GIGAZINE"} | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"} | ${"https://gigazine.net/favicon.ico"}
     ${"Gihyo"}    | ${"https://gihyo.jp/book/2023/978-4-297-13719-9"}                               | ${"https://gihyo.jp/GHfavicon.svg"}
     ${"ｽﾀﾃﾞｨｻﾌﾟﾘ"} | ${"https://blog.studysapuri.jp/entry/2018/11/14/working-out-loud"}              | ${"https://blog.studysapuri.jp/icon/favicon"}
-  `(`getFaviconUrl: $name`, async ({ name, url, expected }) => {
+  `(`getFaviconUrl: $name`, async ({ url, expected }) => {
     const textResponse = await (await fetch(url)).text();
     expect(getFaviconUrl(new JSDOM(textResponse).window.document, url)).toBe(
       expected
@@ -35,7 +34,8 @@ describe("getCoverUrl", () => {
     ${"Cargo"}    | ${"https://doc.rust-lang.org/cargo/reference/publishing.html"}                          | ${undefined}
     ${"GIGAZINE"} | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${"https://i.gzn.jp/img/2023/03/22/windows-11-snipping-tool-vulnerability/00_m.jpg"}
     ${"relative path"} | ${"https://lukas.zapletalovi.com/posts/2022/wrapping-multiple-errors/"} | ${"https://lukas.zapletalovi.com/images/avatar_rh_512.jpg"}
-  `(`getCoverUrl: $name`, async ({ name, url, expected }) => {
+    ${"meta name="} | ${"https://tempo.formkit.com/"} | ${"https://tempo.formkit.com/og.png"}
+  `(`getCoverUrl: $name`, async ({ url, expected }) => {
     const textResponse = await (await fetch(url)).text();
     expect(getCoverUrl(new JSDOM(textResponse).window.document, url)).toBe(
       expected
