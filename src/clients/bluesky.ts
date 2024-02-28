@@ -87,7 +87,7 @@ export async function postToBluesky(
       external: {
         uri: meta.originUrl,
         title: meta.title,
-        description: meta.description ?? meta.title,
+        description: meta.description ?? "",
         thumb: coverImageData,
       },
     },
