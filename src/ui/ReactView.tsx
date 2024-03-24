@@ -322,8 +322,7 @@ ${input}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         minHeight={"8em"}
-        maxHeight={"8em"}
-        resize={"none"}
+        resize="vertical"
       />
       <HStack>
         <Button
