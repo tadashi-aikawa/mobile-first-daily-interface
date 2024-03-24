@@ -5,11 +5,7 @@ import { Notice } from "obsidian";
 import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
 import { CopyIcon, TimeIcon, createIcon } from "@chakra-ui/icons";
-import {
-  pickUrls,
-  replaceDayToJa,
-  trimRedundantEmptyLines,
-} from "../utils/strings";
+import { pickUrls, replaceDayToJa } from "../utils/strings";
 import { createMeta, HTMLMeta, ImageMeta, TwitterMeta } from "../utils/meta";
 import { isPresent } from "../utils/types";
 import { HTMLCard } from "./HTMLCard";
@@ -55,17 +51,13 @@ export const PostCardView = ({
     const nt = new Notice("🦋 Blueskyに投稿中...", 30 * 1000);
 
     // 画像のメタデータを優先するが、Blueskyが両方指定を許容するなら対応するのもアリ
-    // TODO: HTMLと画像が共存すると、HTMLのURLはplain textになってしまう. これがリンクになってくれると良い
-    const meta = imageMetas.first() ?? htmlMetas.first();
-    const text = meta?.originUrl
-      ? trimRedundantEmptyLines(codeBlock.code.replace(meta.originUrl, ""))
-      : codeBlock.code;
-
+    const meta =
+      imageMetas.length > 0 ? imageMetas.slice(0, 4) : htmlMetas.first();
     try {
       await postToBluesky(
         settings.blueskyIdentifier,
         settings.blueskyAppPassword,
-        text,
+        codeBlock.code,
         meta
       );
       nt.setMessage("投稿に成功しました");

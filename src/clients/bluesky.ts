@@ -1,8 +1,8 @@
-import { BskyAgent, RichText } from "@atproto/api";
+import { BlobRef, BskyAgent, RichText } from "@atproto/api";
 import { HTMLMeta, ImageMeta } from "../utils/meta";
 import { requestUrl } from "obsidian";
 import { forceLowerCaseKeys } from "src/utils/collections";
-import { ExhaustiveError } from "src/errors";
+import { trimRedundantEmptyLines } from "src/utils/strings";
 
 function inferContentType(url: string): string | null {
   const urlBeforeQuery = url.split("?").first()!;
@@ -46,7 +46,7 @@ export async function postToBluesky(
   identifier: string,
   password: string,
   text: string,
-  meta?: HTMLMeta | ImageMeta
+  meta?: HTMLMeta | ImageMeta[]
 ): Promise<{ uri: string; cid: string }> {
   if (!identifier) {
     throw Error("identifierが指定されていません");
@@ -60,25 +60,44 @@ export async function postToBluesky(
   });
   await agent.login({ identifier, password });
 
-  const richText = new RichText({ text });
-  await richText.detectFacets(agent);
+  return post(agent, text, meta);
+}
 
+/**
+ * MFDIで入力したテキストをBlueskyに最適な形で加工しpostします
+ */
+async function post(
+  agent: BskyAgent,
+  text: string,
+  meta?: HTMLMeta | ImageMeta[]
+): Promise<{ uri: string; cid: string }> {
+  const toRichText = (input: string): RichText => {
+    const richText = new RichText({ text: trimRedundantEmptyLines(input) });
+    richText.detectFacets(agent);
+    return richText;
+  };
+
+  // No Meta
   if (!meta) {
+    const richText = toRichText(text);
     return agent.post({
       text: richText.text,
       facets: richText.facets,
       langs: ["ja"],
       createdAt: new Date().toISOString(),
     });
-  }
-
-  switch (meta.type) {
-    case "html":
-      return postWithHTMLMeta(agent, richText, meta);
-    case "image":
-      return postWithImageMeta(agent, richText, meta);
-    default:
-      throw new ExhaustiveError(meta);
+  } else if (Array.isArray(meta)) {
+    // ImageMeta[]
+    const richText = toRichText(
+      meta
+        .map((x) => x.originUrl)
+        .reduce((ac, url) => ac.replace(url, ""), text)
+    );
+    return postWithImageMeta(agent, richText, meta);
+  } else {
+    // HTMLMeta
+    const richText = toRichText(text.replace(meta.originUrl, ""));
+    return postWithHTMLMeta(agent, richText, meta);
   }
 }
 
@@ -116,13 +135,36 @@ async function postWithHTMLMeta(
   });
 }
 
-// TODO: 需要があればimage metaは複数指定対応してもよい
 async function postWithImageMeta(
   agent: BskyAgent,
   richText: RichText,
-  meta: ImageMeta
+  metas: ImageMeta[]
 ): Promise<{ uri: string; cid: string }> {
   // meta.dataのBlobデータから生成すれば通信を1回分節約できる...がcontent-typeの推論ロジックなどが必要になり改修の影響範囲も広がるので今はHTMLMetaの画像データ取得ロジックを流用する
+  const results = await Promise.all(
+    metas.map((meta) => uploadImage(agent, meta))
+  );
+
+  return agent.post({
+    text: richText.text,
+    facets: richText.facets,
+    langs: ["ja"],
+    embed: {
+      $type: "app.bsky.embed.images",
+      // TODO: aspectRatioは設定していないが必要なら設定する
+      images: results.map(({ meta, blob }) => ({
+        alt: meta.originUrl,
+        image: blob,
+      })),
+    },
+    createdAt: new Date().toISOString(),
+  });
+}
+
+async function uploadImage(
+  agent: BskyAgent,
+  meta: ImageMeta
+): Promise<{ meta: ImageMeta; blob: BlobRef }> {
   const { data: imageData, encoding } = await loadImage(meta.originUrl);
   if (!imageData) {
     throw Error(
@@ -134,20 +176,5 @@ async function postWithImageMeta(
     encoding,
   });
 
-  return agent.post({
-    text: richText.text,
-    facets: richText.facets,
-    langs: ["ja"],
-    embed: {
-      $type: "app.bsky.embed.images",
-      // TODO: aspectRatioは設定していないが必要なら設定する
-      images: [
-        {
-          alt: meta.originUrl,
-          image: data.blob,
-        },
-      ],
-    },
-    createdAt: new Date().toISOString(),
-  });
+  return { meta, blob: data.blob };
 }
