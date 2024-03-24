@@ -1,4 +1,4 @@
-import { BskyAgent } from "@atproto/api";
+import { BskyAgent, RichText } from "@atproto/api";
 import { HTMLMeta, ImageMeta } from "../utils/meta";
 import { requestUrl } from "obsidian";
 import { forceLowerCaseKeys } from "src/utils/collections";
@@ -60,9 +60,13 @@ export async function postToBluesky(
   });
   await agent.login({ identifier, password });
 
+  const richText = new RichText({ text });
+  await richText.detectFacets(agent);
+
   if (!meta) {
     return agent.post({
-      text,
+      text: richText.text,
+      facets: richText.facets,
       langs: ["ja"],
       createdAt: new Date().toISOString(),
     });
@@ -70,9 +74,9 @@ export async function postToBluesky(
 
   switch (meta.type) {
     case "html":
-      return postWithHTMLMeta(agent, text, meta);
+      return postWithHTMLMeta(agent, richText, meta);
     case "image":
-      return postWithImageMeta(agent, text, meta);
+      return postWithImageMeta(agent, richText, meta);
     default:
       throw new ExhaustiveError(meta);
   }
@@ -80,7 +84,7 @@ export async function postToBluesky(
 
 async function postWithHTMLMeta(
   agent: BskyAgent,
-  text: string,
+  richText: RichText,
   meta: HTMLMeta
 ): Promise<{ uri: string; cid: string }> {
   // カバーイメージが取得できたら取得
@@ -96,7 +100,8 @@ async function postWithHTMLMeta(
   }
 
   return agent.post({
-    text,
+    text: richText.text,
+    facets: richText.facets,
     langs: ["ja"],
     embed: {
       $type: "app.bsky.embed.external",
@@ -114,7 +119,7 @@ async function postWithHTMLMeta(
 // TODO: 需要があればimage metaは複数指定対応してもよい
 async function postWithImageMeta(
   agent: BskyAgent,
-  text: string,
+  richText: RichText,
   meta: ImageMeta
 ): Promise<{ uri: string; cid: string }> {
   // meta.dataのBlobデータから生成すれば通信を1回分節約できる...がcontent-typeの推論ロジックなどが必要になり改修の影響範囲も広がるので今はHTMLMetaの画像データ取得ロジックを流用する
@@ -130,7 +135,8 @@ async function postWithImageMeta(
   });
 
   return agent.post({
-    text,
+    text: richText.text,
+    facets: richText.facets,
     langs: ["ja"],
     embed: {
       $type: "app.bsky.embed.images",
