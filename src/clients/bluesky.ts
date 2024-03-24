@@ -1,7 +1,8 @@
 import { BskyAgent } from "@atproto/api";
-import { HTMLMeta } from "../utils/meta";
+import { HTMLMeta, ImageMeta } from "../utils/meta";
 import { requestUrl } from "obsidian";
 import { forceLowerCaseKeys } from "src/utils/collections";
+import { ExhaustiveError } from "src/errors";
 
 function inferContentType(url: string): string | null {
   const urlBeforeQuery = url.split("?").first()!;
@@ -45,7 +46,7 @@ export async function postToBluesky(
   identifier: string,
   password: string,
   text: string,
-  meta?: HTMLMeta
+  meta?: HTMLMeta | ImageMeta
 ): Promise<{ uri: string; cid: string }> {
   if (!identifier) {
     throw Error("identifierが指定されていません");
@@ -67,6 +68,21 @@ export async function postToBluesky(
     });
   }
 
+  switch (meta.type) {
+    case "html":
+      return postWithHTMLMeta(agent, text, meta);
+    case "image":
+      return postWithImageMeta(agent, text, meta);
+    default:
+      throw new ExhaustiveError(meta);
+  }
+}
+
+async function postWithHTMLMeta(
+  agent: BskyAgent,
+  text: string,
+  meta: HTMLMeta
+): Promise<{ uri: string; cid: string }> {
   // カバーイメージが取得できたら取得
   let coverImageData: any | undefined = undefined;
   if (meta.coverUrl) {
@@ -90,6 +106,41 @@ export async function postToBluesky(
         description: meta.description ?? "",
         thumb: coverImageData,
       },
+    },
+    createdAt: new Date().toISOString(),
+  });
+}
+
+// TODO: 需要があればimage metaは複数指定対応してもよい
+async function postWithImageMeta(
+  agent: BskyAgent,
+  text: string,
+  meta: ImageMeta
+): Promise<{ uri: string; cid: string }> {
+  // meta.dataのBlobデータから生成すれば通信を1回分節約できる...がcontent-typeの推論ロジックなどが必要になり改修の影響範囲も広がるので今はHTMLMetaの画像データ取得ロジックを流用する
+  const { data: imageData, encoding } = await loadImage(meta.originUrl);
+  if (!imageData) {
+    throw Error(
+      `URLから画像を取得できませんでした。Blueskyへの投稿処理を中断します。 url=${meta.originUrl}`
+    );
+  }
+
+  const { data } = await agent.uploadBlob(new Uint8Array(imageData), {
+    encoding,
+  });
+
+  return agent.post({
+    text,
+    langs: ["ja"],
+    embed: {
+      $type: "app.bsky.embed.images",
+      // TODO: aspectRatioは設定していないが必要なら設定する
+      images: [
+        {
+          alt: meta.originUrl,
+          image: data.blob,
+        },
+      ],
     },
     createdAt: new Date().toISOString(),
   });

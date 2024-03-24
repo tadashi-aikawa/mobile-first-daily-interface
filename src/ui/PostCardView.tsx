@@ -54,7 +54,9 @@ export const PostCardView = ({
   const handleClickPostBlueskyIcon = async () => {
     const nt = new Notice("🦋 Blueskyに投稿中...", 30 * 1000);
 
-    const meta = htmlMetas.first();
+    // 画像のメタデータを優先するが、Blueskyが両方指定を許容するなら対応するのもアリ
+    // TODO: HTMLと画像が共存すると、HTMLのURLはplain textになってしまう. これがリンクになってくれると良い
+    const meta = imageMetas.first() ?? htmlMetas.first();
     const text = meta?.originUrl
       ? trimRedundantEmptyLines(codeBlock.code.replace(meta.originUrl, ""))
       : codeBlock.code;
