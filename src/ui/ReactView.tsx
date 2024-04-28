@@ -22,7 +22,7 @@ import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
 import { TaskView } from "./TaskView";
 import { replaceDayToJa } from "../utils/strings";
-import { Settings } from "src/settings";
+import { Settings } from "../settings";
 
 export const ReactView = ({
   app,
