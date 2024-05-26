@@ -1,3 +1,5 @@
+import { describe, expect, test } from "@jest/globals";
+
 import {
   excludeWikiLink,
   parseMarkdownList,
@@ -75,7 +77,7 @@ describe.each`
 // XXX: Markdownは一旦未対応にする
 // ${"[hoge](https://hoge.com)"}                    | ${["https://hoge.com"]}
 // ${"aa [hoge](https://hoge.com) aa"}              | ${["https://hoge.com"]}
-describe.each`
+describe.each<{ text: string; expected: string }>`
   text                                             | expected
   ${"https://hoge.com"}                            | ${["https://hoge.com"]}
   ${"  https://hoge.com"}                          | ${["https://hoge.com"]}

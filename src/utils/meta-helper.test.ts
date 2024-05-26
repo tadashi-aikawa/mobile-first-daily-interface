@@ -1,3 +1,4 @@
+import { describe, expect, test } from "@jest/globals";
 import { JSDOM } from "jsdom";
 import {
   getCharsetFromMeta,
@@ -27,13 +28,17 @@ describe("getFaviconUrl", () => {
 });
 
 describe("getCoverUrl", () => {
-  test.concurrent.each`
+  test.concurrent.each<{
+    name: string;
+    url: string;
+    expected: string | undefined;
+  }>`
     name          | url                                                                                     | expected
     ${"ESLint"}   | ${"https://eslint.org/docs/latest/rules"}                                               | ${"https://eslint.org/og?title=Rules%20Reference&summary=A%20pluggable%20and%20configurable%20linter%20tool%20for%20identifying%20and%20reporting%20on%20patterns%20in%20JavaScript.%20Maintain%20your%20code%20quality%20with%20ease.%0A&is_rule=false&recommended=&fixable=&suggestions="}
     ${"voicy"}    | ${"https://voicy.jp/channel/1380/459280"}                                               | ${"https://ogp-image.voicy.jp/ogp-image/story/0/1380/459280"}
     ${"Cargo"}    | ${"https://doc.rust-lang.org/cargo/reference/publishing.html"}                          | ${undefined}
     ${"GIGAZINE"} | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${"https://i.gzn.jp/img/2023/03/22/windows-11-snipping-tool-vulnerability/00_m.jpg"}
-    ${"relative path"} | ${"https://lukas.zapletalovi.com/posts/2022/wrapping-multiple-errors/"} | ${"https://lukas.zapletalovi.com/images/avatar_rh_512.jpg"}
+    ${"relative path"} | ${"https://lukas.zapletalovi.com/posts/2022/wrapping-multiple-errors/"} | ${"https://lukas.zapletalovi.com/images/avatar_rh_256.avif"}
     ${"meta name="} | ${"https://tempo.formkit.com/"} | ${"https://tempo.formkit.com/og.png"}
   `(`getCoverUrl: $name`, async ({ url, expected }) => {
     const textResponse = await (await fetch(url)).text();
@@ -44,7 +49,11 @@ describe("getCoverUrl", () => {
 });
 
 describe("getMetaByHttpEquiv", () => {
-  test.concurrent.each`
+  test.concurrent.each<{
+    httpEquiv: string;
+    url: string;
+    expected: string | undefined;
+  }>`
     httpEquiv          | url                                                                                     | expected
     ${"content-type"}  | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${undefined}
     ${"content-type"}  | ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}                       | ${"text/html;charset=shift_jis"}
@@ -58,7 +67,10 @@ describe("getMetaByHttpEquiv", () => {
 });
 
 describe("getCharsetFromMeta", () => {
-  test.concurrent.each`
+  test.concurrent.each<{
+    url: string;
+    expected: string | undefined;
+  }>`
      url                                                                                     | expected
      ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"}         | ${"utf-8"}
      ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}                       | ${undefined}
