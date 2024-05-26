@@ -13,7 +13,6 @@ tasks:
     desc: |
       Build
           ∟ [Ex] task release VERSION=1.2.3
-          ∟ [Ex] task release VERSION=1.2.3-beta
     deps:
       - ci
     cmds:

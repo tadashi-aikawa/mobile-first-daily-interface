@@ -6,13 +6,6 @@ function updateVersion(version: string) {
   packageJson.version = version;
   writeFileSync("package.json", JSON.stringify(packageJson, null, "  "));
 
-  const manifestBeta = JSON.parse(readFileSync("manifest-beta.json", "utf8"));
-  manifestBeta.version = version;
-  writeFileSync("manifest-beta.json", JSON.stringify(manifestBeta, null, "  "));
-  if (version.includes("beta")) {
-    return;
-  }
-
   const manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
   const { minAppVersion } = manifest;
   manifest.version = version;
