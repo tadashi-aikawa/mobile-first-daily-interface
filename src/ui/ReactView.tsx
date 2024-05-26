@@ -123,6 +123,9 @@ ${input}
   const handleClickMoveNext = async () => {
     setDate(date.clone().add(1, "day"));
   };
+  const handleClickToday = async () => {
+    setDate(moment());
+  };
 
   const handleClickTime = (codeBlock: CodeBlock) => {
     (async () => {
@@ -292,6 +295,16 @@ ${input}
           onClick={handleClickMovePrevious}
         />
         <Box textAlign={"center"}>
+          <Button
+            marginRight={"0.3em"}
+            fontSize={"80%"}
+            width="3em"
+            height="2em"
+            cursor="pointer"
+            onClick={handleClickToday}
+          >
+            今日
+          </Button>
           <Input
             size="md"
             type="date"
