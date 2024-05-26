@@ -12,7 +12,7 @@
 - 記録先はデイリーノート
 
 > **Note**
-> 本プラグインは[Obsidian Memos]の影響を強く受けています。そのため、[コミュニティプラグイン]には登録しません。また、英語のREADMEを記載する予定もありません。
+> 本プラグインは[Obsidian Memos] (現: [Thino]) の影響を強く受けています。そのため、[コミュニティプラグイン]には登録しません。また、英語のREADMEを記載する予定もありません。
 
 ## 対応OS
 
@@ -76,14 +76,14 @@ MFDI Viewを表示するリーフを指定します。
 
 ## FAQ
 
+> **Warning**
+> FAQの内容は[Thino]がリリースされる前、[Obsidian Memos]の時代のものです。[Thino]では解消している可能性があります。
+
 ### なぜMFDIを作ったのか?
 
 [Obsidian Memos]を使わず、自作した背景には動作速度の問題があります。
 
 デイリーノートが1000ファイル近くあるせいか、[Obsidian Memos]ではメモの表示や投稿時に3～5秒程度固まってしまい実用に支障がありました。また、[Obsidian Memos]はしばらく更新されていなそうだったため、自分で必要な機能のみを搭載したプラグインを開発した方が良いと判断しました。
-
-> **Note**
-> 2023-07-09現在、[Obsidian Memos]はバージョン2.0に向けて開発を行っており、クローズドベータ版を提供されているようです。もしかすると、私が直面した問題は2.0ですべて解決しているかもしれません。
 
 ### [Obsidian Memos]との違いは?
 
@@ -114,6 +114,7 @@ Mobile First Daily Interfaceに関するブログ記事もご覧ください。
 [Obsidian]: https://obsidian.md/
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
 [Obsidian Memos]: https://github.com/Quorafind/Obsidian-Memos
+[Thino]: https://github.com/Quorafind/Obsidian-Thino
 [コミュニティプラグイン]: https://help.obsidian.md/Advanced+topics/Community+plugins
 [表示リーフ]: #表示リーフ
 [リボン]: https://minerva.mamansoft.net/Notes/%E3%83%AA%E3%83%9C%E3%83%B3%20(Obsidian)
