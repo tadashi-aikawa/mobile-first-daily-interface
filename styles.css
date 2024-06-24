@@ -97,7 +97,7 @@ If your plugin does not need CSS, delete this file.
   border-radius: 16px;
 }
 
-.callout[data-callout="mfdi"] {
+.callout[data-callout="fw"] {
   --callout-color: var(--callout-info);
   --callout-icon: lucide-clock;
 }

@@ -68,7 +68,7 @@ export const ReactView = ({
     } else {
       if (settings.enableCalloutFormat) {
         text = `
-> [!mfdi] ${moment().toISOString(true)}
+> [!fw] ${moment().toISOString(true)}
 ${input.split('\n').map(line => `> ${line}`).join('\n')}
 `;
       } else {
@@ -98,7 +98,7 @@ ${input}
   const updatePosts = async (note: TFile) => {
     setPosts(
       ((await appHelper.getPostBlocks(note)) ?? [])
-        ?.filter((x) => (x.blockType === "fw" || x.blockType === "mfdi"))
+        ?.filter((x) => x.blockType === "fw")
         .sort(sorter((x) => x.timestamp.unix(), "desc"))
     );
   };
