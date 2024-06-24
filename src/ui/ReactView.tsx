@@ -62,15 +62,15 @@ export const ReactView = ({
   }, [currentDailyNote]);
 
   const handleClickSubmit = async () => {
-    const text = asTask
-      ? `
-- [ ] ${input}
-`
-      : `
-\`\`\`\`fw ${moment().toISOString(true)}
-${input}
-\`\`\`\`
+    let text = "";
+    if (asTask) {
+      text = `- [ ] ${input}`
+    } else {
+      text = `
+> [!mfdi] ${moment().toISOString(true)}
+${input.split('\n').map(line => `> ${line}`).join('\n')}
 `;
+    }
 
     if (!currentDailyNote) {
       new Notice("デイリーノートが存在しなかったので新しく作成しました");
