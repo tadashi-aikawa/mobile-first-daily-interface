@@ -97,30 +97,7 @@ If your plugin does not need CSS, delete this file.
   border-radius: 16px;
 }
 
-<<<<<<< Updated upstream
-||||||| Stash base
-/************************/
-/* settings
-/************************/
-
-.mfdi-settings-markdown-format {
-  width: 20em;
-  height: 5em;
-  resize: none;
-}
-=======
-/************************/
-/* settings
-/************************/
-
-.mfdi-settings-markdown-format {
-  width: 20em;
-  height: 5em;
-  resize: none;
-}
-
 .callout[data-callout="mfdi"] {
   --callout-color: var(--callout-info);
   --callout-icon: lucide-clock;
 }
->>>>>>> Stashed changes
