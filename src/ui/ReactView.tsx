@@ -2,7 +2,7 @@ import * as React from "react";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Box, Button, Flex, HStack, Input, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
-import { AppHelper, CodeBlock, Task } from "../app-helper";
+import { AppHelper, PostBlock, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
 import {
   createDailyNote,
@@ -37,7 +37,7 @@ export const ReactView = ({
   // デイリーノートが存在しないとnull
   const [currentDailyNote, setCurrentDailyNote] = useState<TFile | null>(null);
   const [input, setInput] = useState("");
-  const [posts, setPosts] = useState<CodeBlock[]>([]);
+  const [posts, setPosts] = useState<PostBlock[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
   const canSubmit = useMemo(() => input.length > 0, [input]);
@@ -66,10 +66,18 @@ export const ReactView = ({
     if (asTask) {
       text = `- [ ] ${input}`
     } else {
-      text = `
+      if (settings.enableCalloutFormat) {
+        text = `
 > [!mfdi] ${moment().toISOString(true)}
 ${input.split('\n').map(line => `> ${line}`).join('\n')}
 `;
+      } else {
+        text = `
+\`\`\`\`fw ${moment().toISOString(true)}
+${input}
+\`\`\`\`
+`;
+      }
     }
 
     if (!currentDailyNote) {
@@ -89,8 +97,8 @@ ${input.split('\n').map(line => `> ${line}`).join('\n')}
 
   const updatePosts = async (note: TFile) => {
     setPosts(
-      ((await appHelper.getCodeBlocks(note)) ?? [])
-        ?.filter((x) => x.lang === "fw")
+      ((await appHelper.getPostBlocks(note)) ?? [])
+        ?.filter((x) => (x.blockType === "fw" || x.blockType === "mfdi"))
         .sort(sorter((x) => x.timestamp.unix(), "desc"))
     );
   };
@@ -127,7 +135,7 @@ ${input.split('\n').map(line => `> ${line}`).join('\n')}
     setDate(moment());
   };
 
-  const handleClickTime = (codeBlock: CodeBlock) => {
+  const handleClickTime = (postBlock: PostBlock) => {
     (async () => {
       if (!currentDailyNote) {
         return;
@@ -138,7 +146,7 @@ ${input.split('\n').map(line => `> ${line}`).join('\n')}
       await leaf.openFile(currentDailyNote);
 
       const editor = appHelper.getActiveMarkdownEditor()!;
-      const pos = editor.offsetToPos(codeBlock.offset);
+      const pos = editor.offsetToPos(postBlock.offset);
       editor.setCursor(pos);
       await leaf.openFile(currentDailyNote, {
         eState: { line: pos.line },
@@ -269,7 +277,7 @@ ${input.split('\n').map(line => `> ${line}`).join('\n')}
               classNames="item"
             >
               <PostCardView
-                codeBlock={x}
+                postBlock={x}
                 settings={settings}
                 onClickTime={handleClickTime}
               />

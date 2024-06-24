@@ -6,6 +6,7 @@ import { TextComponentEvent } from "./obsutils/settings";
 export interface Settings {
   leaf: string;
   autoStartOnLaunch: boolean;
+  enableCalloutFormat: boolean;
   blueskyIdentifier: string;
   blueskyAppPassword: string;
 }
@@ -13,6 +14,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   leaf: "left",
   autoStartOnLaunch: false,
+  enableCalloutFormat: false,
   blueskyIdentifier: "",
   blueskyAppPassword: "",
 };
@@ -56,6 +58,18 @@ export class MFDISettingTab extends PluginSettingTab {
         tc.setValue(this.plugin.settings.autoStartOnLaunch).onChange(
           async (value) => {
             this.plugin.settings.autoStartOnLaunch = value;
+            await this.plugin.saveSettings();
+          }
+        );
+      });
+
+    new Setting(containerEl)
+      .setName("書き込むフォーマットをcallout形式にする")
+      .setDesc("有効にするとcallout形式で書き込みます。以前のcodeブロック形式は、引き続き読み込むことができます。")
+      .addToggle((tc) => {
+        tc.setValue(this.plugin.settings.enableCalloutFormat).onChange(
+          async (value) => {
+            this.plugin.settings.enableCalloutFormat = value;
             await this.plugin.saveSettings();
           }
         );

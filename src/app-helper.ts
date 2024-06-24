@@ -2,10 +2,10 @@ import { App, Editor, MarkdownView, moment, TFile } from "obsidian";
 import { Moment } from "moment";
 import { pickTaskName } from "./utils/strings";
 
-export interface CodeBlock {
-  lang: string;
-  timestamp: Moment;
-  code: string;
+export interface PostBlock {
+  blockType: string;
+  timestamp: Moment | any;
+  body: string;
   offset: number;
 }
 
@@ -63,30 +63,50 @@ export class AppHelper {
     return this.unsafeApp.vault.adapter.append(file.path, text);
   }
 
-  async getCodeBlocks(file: TFile): Promise<CodeBlock[] | null> {
+  async getPostBlocks(file: TFile): Promise<PostBlock[] | null> {
     const content = await this.loadFile(file.path);
 
     return (
       this.unsafeApp.metadataCache
         .getFileCache(file)
-        ?.sections?.filter((x) => x.type === "code")
+        ?.sections?.filter((x) => (x.type === "callout" || x.type === "code"))
         .map((x) => {
           const str = content.slice(
             x.position.start.offset,
             x.position.end.offset
           );
           const lines = str.split("\n");
-
-          const lang = lines[0].split(" ")[0].replace("````", "");
-          const timestamp = lines[0].split(" ")[1];
           const offset = x.position.start.offset;
 
-          return {
-            lang,
-            timestamp: moment(timestamp),
-            code: lines.slice(1, -1).join("\n"),
-            offset,
-          };
+          const postBlock: PostBlock = (() => {
+            if (x.type === "code") {
+              /*
+              ````${blockType} ${timestamp}
+              ${body}
+              ````
+              */
+              return {
+                blockType: lines[0].split(" ")[0].replace("````", ""),
+                timestamp: moment(lines[0].split(" ")[1]),
+                body: lines.slice(1, -1).join("\n"),
+                offset: offset
+              }
+            } else { // if (x.type === "callout") {
+              /*
+              > [!${blockType}] ${timestamp}
+              > ${body}
+              */
+              const matches = lines[0].match(/\[!(\w+)\]/);
+              return {
+                blockType: matches && matches[1] ? matches[1] : "",
+                timestamp: moment(lines[0].split(" ")[2]),
+                body: lines.slice(1).map((l) => l.replace(/^>\s*/, "")).join("\n"),
+                offset: offset
+              }
+            }
+          })();
+
+          return postBlock;
         }) ?? null
     );
   }

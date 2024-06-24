@@ -8,7 +8,7 @@
     "build": "tsc -noEmit -skipLibCheck --target ES2018 && bun esbuild.config.mjs production",
     "version": "bun version-bump.mjs && git add manifest.json versions.json",
     "prepare": "husky install",
-    "pre:push": "tsc -noEmit -skipLibCheck && bun run test",
+    "pre:push": "tsc -noEmit -skipLibCheck --target ES2018 && bun run test",
     "test": "jest",
     "ci": "bun install && bun run build && bun run test",
     "release": "bun ci && bun version-bump.mts ${VERSION} && git add package.json manifest.json versions.json bun.lockb && git commit -m ${VERSION} && git tag ${VERSION} && git push --tags && git push"
