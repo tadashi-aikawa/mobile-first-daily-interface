@@ -1,12 +1,17 @@
 import { App, Editor, MarkdownView, moment, TFile } from "obsidian";
-import { Moment } from "moment";
 import { pickTaskName } from "./utils/strings";
 
 export interface CodeBlock {
   lang: string;
-  timestamp: Moment;
+  meta: string;
   code: string;
   offset: number;
+}
+
+export interface Header {
+  title: string;
+  body: string;
+  titleOffset: number;
 }
 
 export interface Task {
@@ -78,16 +83,42 @@ export class AppHelper {
           const lines = str.split("\n");
 
           const lang = lines[0].split(" ")[0].replace("````", "");
-          const timestamp = lines[0].split(" ")[1];
+          const meta = lines[0].split(" ")[1];
           const offset = x.position.start.offset;
 
           return {
             lang,
-            timestamp: moment(timestamp),
+            meta,
             code: lines.slice(1, -1).join("\n"),
             offset,
           };
         }) ?? null
+    );
+  }
+
+  async getHeaders(file: TFile, level: number): Promise<Header[] | null> {
+    const content = await this.loadFile(file.path);
+
+    const headings = this.unsafeApp.metadataCache
+      .getFileCache(file)
+      ?.headings?.filter((x) => x.level === level);
+    if (!headings) {
+      return null;
+    }
+
+    return (
+      headings.map((x, i) => {
+        return {
+          title: x.heading,
+          body: content.slice(
+            x.position.end.offset + 1,
+            i < headings.length - 1
+              ? headings[i + 1].position.start.offset - 1
+              : undefined
+          ),
+          titleOffset: x.position.start.offset,
+        };
+      }) ?? null
     );
   }
 

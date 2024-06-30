@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { CodeBlock } from "../app-helper";
 import { Notice } from "obsidian";
 import { Box, HStack } from "@chakra-ui/react";
 import Markdown from "marked-react";
@@ -13,6 +12,7 @@ import { ImageCard } from "./ImageCard";
 import { TwitterCard } from "./TwitterCard";
 import { postToBluesky } from "../clients/bluesky";
 import { Settings } from "../settings";
+import { Post } from "./ReactView";
 
 const BlueskyIcon = createIcon({
   displayName: "BlueskyIcon",
@@ -30,13 +30,13 @@ const BlueskyIcon = createIcon({
 });
 
 export const PostCardView = ({
-  codeBlock,
+  post,
   settings,
   onClickTime,
 }: {
-  codeBlock: CodeBlock;
+  post: Post;
   settings: Settings;
-  onClickTime: (codeBlock: CodeBlock) => void;
+  onClickTime: (post: Post) => void;
 }) => {
   const [htmlMetas, setHtmlMetas] = useState<HTMLMeta[]>([]);
   const [imageMetas, setImageMetas] = useState<ImageMeta[]>([]);
@@ -57,7 +57,7 @@ export const PostCardView = ({
       await postToBluesky(
         settings.blueskyIdentifier,
         settings.blueskyAppPassword,
-        codeBlock.code,
+        post.message,
         meta
       );
       nt.setMessage("投稿に成功しました");
@@ -71,7 +71,7 @@ export const PostCardView = ({
 
   useEffect(() => {
     (async function () {
-      const urls = pickUrls(codeBlock.code);
+      const urls = pickUrls(post.message);
       const results = (await Promise.all(urls.map(createMeta))).filter(
         isPresent
       );
@@ -81,7 +81,7 @@ export const PostCardView = ({
         results.filter((x): x is TwitterMeta => x.type === "twitter")
       );
     })();
-  }, [codeBlock.code]);
+  }, [post.message]);
 
   return (
     <Box
@@ -99,7 +99,7 @@ export const PostCardView = ({
         className="markdown-rendered"
       >
         <Markdown gfm breaks>
-          {codeBlock.code}
+          {post.message}
         </Markdown>
         {htmlMetas.map((meta) => (
           <HTMLCard key={meta.originUrl} meta={meta} />
@@ -118,16 +118,11 @@ export const PostCardView = ({
         paddingRight={10}
         justify="end"
       >
-        <Box cursor="pointer" onClick={() => onClickTime(codeBlock)}>
+        <Box cursor="pointer" onClick={() => onClickTime(post)}>
           <TimeIcon marginRight={2} />
-          {replaceDayToJa(
-            codeBlock.timestamp.format("YYYY-MM-DD(ddd) H:mm:ss")
-          )}
+          {replaceDayToJa(post.timestamp.format("YYYY-MM-DD(ddd) H:mm:ss"))}
         </Box>
-        <Box
-          cursor="pointer"
-          onClick={() => handleClickCopyIcon(codeBlock.code)}
-        >
+        <Box cursor="pointer" onClick={() => handleClickCopyIcon(post.message)}>
           <CopyIcon marginRight={2} />
           copy
         </Box>

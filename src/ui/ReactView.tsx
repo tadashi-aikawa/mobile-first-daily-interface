@@ -2,7 +2,7 @@ import * as React from "react";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Box, Button, Flex, HStack, Input, Textarea } from "@chakra-ui/react";
 import { App, moment, Notice, TFile } from "obsidian";
-import { AppHelper, CodeBlock, Task } from "../app-helper";
+import { AppHelper, Task } from "../app-helper";
 import { sorter } from "../utils/collections";
 import {
   createDailyNote,
@@ -22,7 +22,41 @@ import { Moment } from "moment";
 import { PostCardView } from "./PostCardView";
 import { TaskView } from "./TaskView";
 import { replaceDayToJa } from "../utils/strings";
-import { Settings } from "../settings";
+import { PostFormat, Settings, postFormatMap } from "../settings";
+
+export interface Post {
+  timestamp: Moment;
+  message: string;
+  offset: number;
+}
+
+function toText(
+  input: string,
+  asTask: boolean,
+  postFormat: PostFormat
+): string {
+  if (asTask) {
+    return `
+- [ ] ${input}
+`;
+  }
+
+  const ts = moment().toISOString(true);
+
+  if (postFormat.type === "codeblock") {
+    return `
+\`\`\`\`fw ${ts}
+${input}
+\`\`\`\`
+`;
+  }
+
+  return `
+${"#".repeat(postFormat.level)} ${ts}
+
+${input}
+`;
+}
 
 export const ReactView = ({
   app,
@@ -37,7 +71,7 @@ export const ReactView = ({
   // デイリーノートが存在しないとnull
   const [currentDailyNote, setCurrentDailyNote] = useState<TFile | null>(null);
   const [input, setInput] = useState("");
-  const [posts, setPosts] = useState<CodeBlock[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
   const canSubmit = useMemo(() => input.length > 0, [input]);
@@ -61,16 +95,10 @@ export const ReactView = ({
     Promise.all([updatePosts(currentDailyNote), updateTasks(currentDailyNote)]);
   }, [currentDailyNote]);
 
+  const postFormat = postFormatMap[settings.postFormatOption];
+
   const handleClickSubmit = async () => {
-    const text = asTask
-      ? `
-- [ ] ${input}
-`
-      : `
-\`\`\`\`fw ${moment().toISOString(true)}
-${input}
-\`\`\`\`
-`;
+    const text = toText(input, asTask, postFormat);
 
     if (!currentDailyNote) {
       new Notice("デイリーノートが存在しなかったので新しく作成しました");
@@ -88,11 +116,24 @@ ${input}
   };
 
   const updatePosts = async (note: TFile) => {
-    setPosts(
-      ((await appHelper.getCodeBlocks(note)) ?? [])
-        ?.filter((x) => x.lang === "fw")
-        .sort(sorter((x) => x.timestamp.unix(), "desc"))
-    );
+    const _posts =
+      postFormat.type === "codeblock"
+        ? ((await appHelper.getCodeBlocks(note)) ?? [])
+            ?.filter((x) => x.lang === "fw")
+            .map((x) => ({
+              timestamp: moment(x.meta),
+              message: x.code,
+              offset: x.offset,
+            }))
+        : ((await appHelper.getHeaders(note, postFormat.level)) ?? [])
+            .filter((x) => moment(x.title).isValid())
+            .map((x) => ({
+              timestamp: moment(x.title),
+              message: x.body,
+              offset: x.titleOffset,
+            }));
+
+    setPosts(_posts.sort(sorter((x) => x.timestamp.unix(), "desc")));
   };
 
   const updateTasks = async (note: TFile) => {
@@ -127,7 +168,7 @@ ${input}
     setDate(moment());
   };
 
-  const handleClickTime = (codeBlock: CodeBlock) => {
+  const handleClickTime = (post: Post) => {
     (async () => {
       if (!currentDailyNote) {
         return;
@@ -138,7 +179,7 @@ ${input}
       await leaf.openFile(currentDailyNote);
 
       const editor = appHelper.getActiveMarkdownEditor()!;
-      const pos = editor.offsetToPos(codeBlock.offset);
+      const pos = editor.offsetToPos(post.offset);
       editor.setCursor(pos);
       await leaf.openFile(currentDailyNote, {
         eState: { line: pos.line },
@@ -149,7 +190,7 @@ ${input}
   useEffect(() => {
     const eventRef = app.metadataCache.on(
       "changed",
-      async (file, data, cache) => {
+      async (file, _data, _cache) => {
         // currentDailyNoteが存在してパスが異なるなら、違う日なので更新は不要
         if (currentDailyNote != null && file.path !== currentDailyNote.path) {
           return;
@@ -269,7 +310,7 @@ ${input}
               classNames="item"
             >
               <PostCardView
-                codeBlock={x}
+                post={x}
                 settings={settings}
                 onClickTime={handleClickTime}
               />
