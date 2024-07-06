@@ -11,13 +11,11 @@ export const VIEW_TYPE_MFDI = "mfdi-view";
 type IconName = string;
 
 export class MFDIView extends ItemView {
-  root: Root;
-  appHelper: AppHelper;
-  settings: Settings;
+  private root: Root;
+  private settings: Settings;
 
   constructor(leaf: WorkspaceLeaf, settings: Settings) {
     super(leaf);
-    this.appHelper = new AppHelper(this.app);
     this.settings = settings;
   }
 
@@ -34,11 +32,21 @@ export class MFDIView extends ItemView {
   }
 
   async onOpen() {
-    this.root = createRoot(this.containerEl.children[1]);
-    this.root.render(<ReactView app={this.app} settings={this.settings} />);
+    this.renderNewView();
   }
 
   async onClose() {
     this.root.unmount();
+  }
+
+  renderNewView() {
+    this.root = createRoot(this.containerEl.children[1]);
+    this.root.render(<ReactView app={this.app} settings={this.settings} />);
+  }
+
+  updateSettings(settings: Settings) {
+    this.settings = settings;
+    this.root.unmount();
+    this.renderNewView();
   }
 }

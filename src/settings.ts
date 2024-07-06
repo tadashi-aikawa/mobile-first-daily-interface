@@ -58,6 +58,7 @@ export class MFDISettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.postFormatOption = value as PostFormatOption;
             await this.plugin.saveSettings();
+            this.plugin.rerenderView();
           })
       );
 
@@ -94,6 +95,7 @@ export class MFDISettingTab extends PluginSettingTab {
       TextComponentEvent.onChange(cb, async (value) => {
         this.plugin.settings.blueskyIdentifier = value;
         await this.plugin.saveSettings();
+        this.plugin.rerenderView();
       })
         .setValue(this.plugin.settings.blueskyIdentifier)
         .setPlaceholder("例: mfdi.bsky.social");
@@ -107,6 +109,7 @@ export class MFDISettingTab extends PluginSettingTab {
           async (value) => {
             this.plugin.settings.blueskyAppPassword = value;
             await this.plugin.saveSettings();
+            this.plugin.rerenderView();
           },
           { secret: true }
         ).setValue(this.plugin.settings.blueskyAppPassword);

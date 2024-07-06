@@ -7,6 +7,7 @@ export default class MFDIPlugin extends Plugin {
   appHelper: AppHelper;
   settings: Settings;
   settingTab: MFDISettingTab;
+  view?: MFDIView;
 
   async onload() {
     this.appHelper = new AppHelper(this.app);
@@ -15,10 +16,10 @@ export default class MFDIPlugin extends Plugin {
     this.settingTab = new MFDISettingTab(this.app, this);
     this.addSettingTab(this.settingTab);
 
-    this.registerView(
-      VIEW_TYPE_MFDI,
-      (leaf) => new MFDIView(leaf, this.settings)
-    );
+    this.registerView(VIEW_TYPE_MFDI, (leaf) => {
+      this.view = new MFDIView(leaf, this.settings);
+      return this.view;
+    });
 
     this.app.workspace.onLayoutReady(async () => {
       if (this.settings.autoStartOnLaunch) {
@@ -70,5 +71,9 @@ export default class MFDIPlugin extends Plugin {
   async loadSettings(): Promise<void> {
     const currentSettings = await this.loadData();
     this.settings = { ...DEFAULT_SETTINGS, ...currentSettings };
+  }
+
+  rerenderView() {
+    this.view?.updateSettings(this.settings);
   }
 }
