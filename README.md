@@ -125,6 +125,13 @@ Mobile First Daily Interfaceに関するブログ記事もご覧ください。
 
 [📘Obsidian Memos みたいなプラグイン Mobile First Daily Interfaceを作ったワケ \- Minerva](https://minerva.mamansoft.net/%F0%9F%93%98Articles/%F0%9F%93%98Obsidian+Memos+%E3%81%BF%E3%81%9F%E3%81%84%E3%81%AA%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3+Mobile+First+Daily+Interface%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%9F%E3%83%AF%E3%82%B1)
 
+## 開発者向け
+
+### Setup
+
+```bash
+git config core.hooksPath hooks
+```
 
 [Obsidian]: https://obsidian.md/
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
