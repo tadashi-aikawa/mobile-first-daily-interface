@@ -52,6 +52,8 @@ test.each([
   ["* hoge", { prefix: "* ", content: "hoge" }],
   ["* [ ] hoge", { prefix: "* [ ] ", content: "hoge" }],
   ["* [x] hoge", { prefix: "* [x] ", content: "hoge" }],
+  ["	- [ ] tab indent", { prefix: "	- [ ] ", content: "tab indent" }],
+  ["	- [x] tab indent", { prefix: "	- [x] ", content: "tab indent" }],
 ])(
   `parseMarkdownList("%s")`,
   (text: string, expected: ReturnType<typeof parseMarkdownList>) => {
