@@ -133,6 +133,10 @@ Mobile First Daily Interfaceに関するブログ記事もご覧ください。
 git config core.hooksPath hooks
 ```
 
+### リリース
+
+[Release Action](https://github.com/tadashi-aikawa/mobile-first-daily-interface/actions/workflows/release.yaml) を実行。
+
 [Obsidian]: https://obsidian.md/
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
 [Obsidian Memos]: https://github.com/Quorafind/Obsidian-Memos
