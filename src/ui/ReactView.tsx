@@ -74,7 +74,7 @@ export const ReactView = ({
   const [posts, setPosts] = useState<Post[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
-  const canSubmit = useMemo(() => input.length > 0, [input]);
+  const canSubmit = useMemo(() => input.trim().length > 0, [input]);
 
   const updateCurrentDailyNote = () => {
     const n = getDailyNote(date, getAllDailyNotes()) as TFile | null;
