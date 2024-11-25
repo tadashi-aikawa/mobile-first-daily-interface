@@ -97,7 +97,11 @@ export const ReactView = ({
 
   const postFormat = postFormatMap[settings.postFormatOption];
 
-  const handleClickSubmit = async () => {
+  const handleSubmit = async () => {
+    if (!canSubmit) {
+      return;
+    }
+
     const text = toText(input, asTask, postFormat);
 
     if (!currentDailyNote) {
@@ -166,6 +170,13 @@ export const ReactView = ({
   };
   const handleClickToday = async () => {
     setDate(moment());
+  };
+
+  const handleKeyUp = (event: React.KeyboardEvent) => {
+    if (event.ctrlKey && event.key === "Enter") {
+      handleSubmit();
+      event.preventDefault();
+    }
   };
 
   const handleClickTime = (post: Post) => {
@@ -377,6 +388,7 @@ export const ReactView = ({
         onChange={(e) => setInput(e.target.value)}
         minHeight={"8em"}
         resize="vertical"
+        onKeyUp={handleKeyUp}
       />
       <HStack>
         <Button
@@ -386,7 +398,7 @@ export const ReactView = ({
           maxHeight={"2.4em"}
           flexGrow={1}
           cursor={canSubmit ? "pointer" : ""}
-          onClick={handleClickSubmit}
+          onClick={handleSubmit}
         >
           {asTask ? "タスク追加" : "投稿"}
         </Button>
