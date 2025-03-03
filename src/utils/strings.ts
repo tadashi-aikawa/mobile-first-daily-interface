@@ -48,6 +48,17 @@ export function sjis2String(sjisBuffer: ArrayBuffer): string {
   return Encoding.codeToString(unicodeArray);
 }
 
+/**
+ * EUC-JPのbufferをstringに変換します
+ */
+export function eucJp2String(eucJpBuffer: ArrayBuffer): string {
+  const unicodeArray = Encoding.convert(new Uint8Array(eucJpBuffer), {
+    from: "EUCJP",
+    to: "UNICODE",
+  });
+  return Encoding.codeToString(unicodeArray);
+}
+
 export function trimRedundantEmptyLines(text: string): string {
   return text.replace(/\n{3,}/g, "\n\n").replace(/\n+$/g, "");
 }

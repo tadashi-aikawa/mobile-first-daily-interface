@@ -9,7 +9,7 @@ import {
   getMetaByName,
   getMetaByProperty,
 } from "./meta-helper";
-import { sjis2String } from "./strings";
+import { eucJp2String, sjis2String } from "./strings";
 
 export type Meta = HTMLMeta | ImageMeta | TwitterMeta;
 export interface HTMLMeta {
@@ -48,8 +48,40 @@ async function getTwitterMeta(
     console.debug(`twitter embed status is ${res.status}`);
     return null;
   }
-
   return res.json;
+}
+
+function htmlString2Document(
+  htmlString: string,
+  htmlBuffer: ArrayBuffer
+): Document {
+  let html = new DOMParser().parseFromString(htmlString, "text/html");
+
+  const metaContentType = getCharsetFromMeta(html);
+  const httpEquivContentType = getMetaByHttpEquiv(html, "content-type");
+
+  const normalize = (s: string | undefined) =>
+    s?.toLowerCase()?.replaceAll(/[-_]/g, "");
+  const infer = (encoding: "shiftjis" | "eucjp" | "utf8"): boolean =>
+    normalize(metaContentType)?.includes(encoding) ??
+    normalize(httpEquivContentType?.content)?.includes(encoding) ??
+    false;
+
+  if (infer("shiftjis")) {
+    // HTMLのmetaデータにshift_jisと明記されている場合はbodyを作り直す
+    html = new DOMParser().parseFromString(
+      sjis2String(htmlBuffer),
+      "text/html"
+    );
+  } else if (infer("eucjp")) {
+    // HTMLのmetaデータにeuc_jpと明記されている場合はbodyを作り直す
+    html = new DOMParser().parseFromString(
+      eucJp2String(htmlBuffer),
+      "text/html"
+    );
+  }
+
+  return html;
 }
 
 export async function createMeta(url: string): Promise<Meta | null> {
@@ -96,23 +128,7 @@ export async function createMeta(url: string): Promise<Meta | null> {
     console.debug(`content-type is ${contentType}`);
     return null;
   }
-  let html = new DOMParser().parseFromString(res.text, "text/html");
-
-  const metaContentType = getCharsetFromMeta(html)?.toLowerCase();
-  const httpEquivContentType = getMetaByHttpEquiv(
-    html,
-    "content-type"
-  )?.toLowerCase();
-  if (
-    metaContentType?.includes("shift_jis") ||
-    httpEquivContentType?.includes("shift_jis")
-  ) {
-    // HTMLのmetaデータにshift_jisと明記されている場合はbodyを作り直す
-    html = new DOMParser().parseFromString(
-      sjis2String(res.arrayBuffer),
-      "text/html"
-    );
-  }
+  const html = htmlString2Document(res.text, res.arrayBuffer);
 
   const siteName = getMetaByProperty(html, "og:site_name") ?? new URL(url).host;
   const title =

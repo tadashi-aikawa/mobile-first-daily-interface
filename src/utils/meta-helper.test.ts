@@ -52,17 +52,18 @@ describe("getMetaByHttpEquiv", () => {
   test.each<{
     httpEquiv: string;
     url: string;
-    expected: string | undefined;
+    expected: { content: string } | undefined;
   }>`
     httpEquiv         | url                                                                             | expected
     ${"content-type"} | ${"https://gigazine.net/news/20230322-windows-11-snipping-tool-vulnerability/"} | ${undefined}
-    ${"content-type"} | ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}               | ${"text/html;charset=shift_jis"}
+    ${"content-type"} | ${"https://www.itmedia.co.jp/news/articles/2307/26/news116.html"}               | ${{ content: "text/html;charset=shift_jis" }}
     ${"content-type"} | ${"https://www.itmedia.co.jp/pcuser/spv/2310/18/news078.html"}                  | ${undefined}
+    ${"content-type"} | ${"https://www.4gamer.net/games/794/G079439/20250227068/"}                      | ${{ content: "text/html; charset=EUC-JP" }}
   `(`getMetaByHttpEquiv: $httpEquiv`, async ({ httpEquiv, url, expected }) => {
     const textResponse = await (await fetch(url)).text();
     expect(
       getMetaByHttpEquiv(new JSDOM(textResponse).window.document, httpEquiv)
-    ).toBe(expected);
+    ).toEqual(expected);
   });
 });
 

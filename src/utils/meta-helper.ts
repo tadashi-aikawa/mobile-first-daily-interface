@@ -21,10 +21,15 @@ export function getCharsetFromMeta(dom: Document): string | undefined {
 export function getMetaByHttpEquiv(
   dom: Document,
   httpEquiv: string
-): string | undefined {
-  return dom
-    .querySelector(`meta[http-equiv='${httpEquiv}']`)
-    ?.attributes.getNamedItem("content")?.value;
+): { content?: string; charset?: string } | undefined {
+  const meta = dom.querySelector(`meta[http-equiv='${httpEquiv}']`);
+  if (!meta) {
+    return undefined;
+  }
+
+  return {
+    content: meta.attributes.getNamedItem("content")?.value,
+  };
 }
 
 export function getSrcById(dom: Document, id: string): string | undefined {
