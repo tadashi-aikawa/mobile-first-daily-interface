@@ -1,9 +1,9 @@
 {
-  "id": "mobile-first-daily-interface",
-  "name": "Mobile First Daily Interface",
+  "id": "mobile-fast-memo",
+  "name": "Mobile Fast Memo",
   "version": "1.0.0",
   "minAppVersion": "1.2.8",
   "description": "TODO",
-  "author": "tadashi-aikawa",
+  "author": "hayato-aoaki(original author: tadashi-aikawa)",
   "isDesktopOnly": false
 }

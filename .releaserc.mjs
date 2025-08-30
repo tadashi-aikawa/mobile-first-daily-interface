@@ -1,5 +1,5 @@
 export default {
-  branches: ["master"],
+  branches: ["main"],
   tagFormat: "${version}",
   plugins: [
     [

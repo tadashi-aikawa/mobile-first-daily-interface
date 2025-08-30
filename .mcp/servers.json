@@ -1,0 +1,18 @@
+{
+  "servers": {
+    "serena": {
+      "command": "serena",
+      "args": [],
+      "env": {
+        "SERENA_API_KEY": "${SERENA_API_KEY}"
+      }
+    },
+    "context7": {
+      "command": "context7",
+      "args": [],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    }
+  }
+}
