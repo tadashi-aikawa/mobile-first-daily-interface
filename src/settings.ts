@@ -67,11 +67,25 @@ export class MFDISettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h3", { text: "Mobile Memo" });
+    containerEl.createEl("h3", { text: "📂 出力先" });
+
+    new Setting(containerEl)
+      .setName("デイリーノートのディレクトリ")
+      .setDesc(
+        "デイリーノートの保存先をVault相対で指定します。空の場合はObsidianのDaily Notes設定を使用します。独自に指定した場合、新規ノートへテンプレートは適用されません。"
+      )
+      .addText((cb) => {
+        TextComponentEvent.onChange(cb, async (value) => {
+          this.plugin.settings.dailyNoteDir = value;
+          await this.plugin.saveSettings();
+        }).setValue(this.plugin.settings.dailyNoteDir);
+      });
+
+    containerEl.createEl("h3", { text: "📝 メモ" });
 
     new Setting(containerEl)
       .setName("投稿形式")
-      .setDesc("投稿形式を指定します。")
+      .setDesc("メモをデイリーノートへ保存するときの形式を指定します。")
       .addDropdown((tc) =>
         tc
           .addOptions(mirrorMap(Object.keys(postFormatMap), (x) => x))
@@ -83,24 +97,10 @@ export class MFDISettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: "📝 デイリーノート" });
-
-    new Setting(containerEl)
-      .setName("デイリーノートのディレクトリ")
-      .setDesc(
-        "Vault相対のフォルダを指定します。空の場合はObsidianのDaily Notes設定を使用します。"
-      )
-      .addText((cb) => {
-        TextComponentEvent.onChange(cb, async (value) => {
-          this.plugin.settings.dailyNoteDir = value;
-          await this.plugin.saveSettings();
-        }).setValue(this.plugin.settings.dailyNoteDir);
-      });
-
     new Setting(containerEl)
       .setName("メモの追記先見出し")
       .setDesc(
-        "例: ## つぶやき。指定された見出し配下の末尾に追記します。空の場合はファイル末尾に追記します。"
+        "例: ## つぶやき。指定した見出し内へ追記します。見出しがない場合はファイル末尾に作成し、空の場合はファイル末尾へ直接追記します。"
       )
       .addText((cb) => {
         TextComponentEvent.onChange(cb, async (value) => {
@@ -115,7 +115,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("メモの追記区切り")
       .setDesc(
-        "指定された見出しの下からこの区切り文字列の上までが追記先になります。"
+        "追記先見出し内で、次の同レベル以上の見出しまたはこの文字列の直前までを追記範囲にします。空の場合は区切りを使用しません。"
       )
       .addText((cb) => {
         TextComponentEvent.onChange(cb, async (value) => {
@@ -127,7 +127,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("投稿日時フォーマット")
       .setDesc(
-        "投稿時に付与する日時のフォーマットを指定します。例: YYYY-MM-DD HH:mm"
+        "メモの投稿日時とタスクの{{timestamp}}に使用するフォーマットを指定します。例: YYYY-MM-DD HH:mm"
       )
       .addText((cb) => {
         TextComponentEvent.onChange(cb, async (value) => {
@@ -142,7 +142,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("投稿見出しを自動で段下げ")
       .setDesc(
-        "見出し形式で投稿する場合、追記先見出しより1段下のレベルに自動調整します。"
+        "見出し形式の投稿が追記先見出しと同じか浅い場合、追記先より1段深いレベルに調整します。すでに深い場合は変更しません。"
       )
       .addToggle((tc) => {
         tc.setValue(this.plugin.settings.autoDemotePostHeading).onChange(
@@ -159,7 +159,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("タスクの追記先見出し")
       .setDesc(
-        "例: ## ☑️ タスク。指定された見出し配下の末尾に追記します。見出しがない場合はファイル末尾に見出しを作成します。"
+        "例: ## ☑️ タスク。指定した見出し内へ追記します。見出しがない場合はファイル末尾に作成し、空の場合はファイル末尾へ直接追記します。"
       )
       .addText((cb) => {
         TextComponentEvent.onChange(cb, async (value) => {
@@ -173,7 +173,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("タスクの追記区切り")
       .setDesc(
-        "指定された見出しの下から、この区切り文字列の上までがタスクの追記先になります。"
+        "追記先見出し内で、次の同レベル以上の見出しまたはこの文字列の直前までを追記範囲にします。空の場合は区切りを使用しません。"
       )
       .addText((cb) => {
         TextComponentEvent.onChange(cb, async (value) => {
@@ -209,6 +209,8 @@ export class MFDISettingTab extends PluginSettingTab {
           .setPlaceholder("例:  #todo")
           .setValue(this.plugin.settings.taskSuffix);
       });
+
+    containerEl.createEl("h3", { text: "🖥️ 表示・起動" });
 
     new Setting(containerEl)
       .setName("表示リーフ（PC）")
@@ -253,7 +255,7 @@ export class MFDISettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("モバイル起動時に入力フォームを自動表示")
       .setDesc(
-        "モバイルで起動したときに通常の入力フォームを自動で開きます。"
+        "モバイルで起動したときやバックグラウンドから戻ったときにMFDI Viewを自動で開きます。"
       )
       .addToggle((tc) => {
         tc.setValue(this.plugin.settings.autoOpenInputOnMobile).onChange(
@@ -263,6 +265,5 @@ export class MFDISettingTab extends PluginSettingTab {
           }
         );
       });
-
   }
 }

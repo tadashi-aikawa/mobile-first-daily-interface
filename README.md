@@ -1,9 +1,9 @@
 # Mobile First Daily Interface (MFDI)
 
-[![release](https://img.shields.io/github/release/tadashi-aikawa/mobile-first-daily-interface.svg)](https://github.com/tadashi-aikawa/mobile-first-daily-interface/releases/latest)
-![downloads](https://img.shields.io/github/downloads/tadashi-aikawa/mobile-first-daily-interface/total)
+[![release](https://img.shields.io/github/release/captain-blue210/mobile-first-daily-interface.svg)](https://github.com/captain-blue210/mobile-first-daily-interface/releases/latest)
+![downloads](https://img.shields.io/github/downloads/captain-blue210/mobile-first-daily-interface/total)
 
-![image](https://raw.githubusercontent.com/tadashi-aikawa/mobile-first-daily-interface/master/image.png)
+![image](https://raw.githubusercontent.com/captain-blue210/mobile-first-daily-interface/main/image.png)
 
 [Obsidian]にてモバイルに最適なインターフェースでデイリーノートを扱うプラグインです。
 
@@ -28,112 +28,82 @@
 
 ## ⏬ インストール
 
-[BRAT]を使って`tadashi-aikawa/mobile-first-daily-interface`でインストールします。
+[BRAT]を使って`captain-blue210/mobile-first-daily-interface`でインストールします。
 
 ## 起動方法
 
-[リボン]の『Mobile Memo』という鉛筆マークをクリックしてください。
-
-クイック投稿（モーダル）
-
-- [リボン]の『+』アイコン（ツールチップ: "Mobile Memo（モーダル投稿）"）をクリック
-- もしくは、コマンドパレットで「Mobile Memo: モーダルで投稿」を実行
+[リボン]の「Mobile Memo」という鉛筆マークをクリックするか、コマンドパレットで `Mobile Memoを開く` を実行してください。
 
 デフォルトでは左サイドリーフに開かれます。
 
 ## 設定
 
-### 投稿形式
-
-`default: コードブロック`
-
-MFDI の投稿がエディタ上でどのような形式になるかを指定します。
-
-- コードブロック
-- 見出し 1
-- 見出し 2
-- 見出し 3
-- 見出し 4
-- 見出し 5
-- 見出し 6
-- リスト
-
-### 表示リーフ（PC/モバイル）
-
-`default: left`
-
-PC とモバイルで MFDI View を表示するリーフをそれぞれ指定できます。
-
-- PC 向け: 表示リーフ（PC）
-- モバイル向け: 表示リーフ（モバイル）
-
-| 設定値  | 意味                               |
-| ------- | ---------------------------------- |
-| left    | 左サイドリーフに表示します         |
-| right   | 右サイドリーフに表示します         |
-| current | **現在選択中のリーフ**に表示します |
-
-### Obsidian 起動時に自動起動・アクティブにする
-
-`default: false`
-
-有効にすると、Obsidian 起動時に MFDI が立ち上がります。
-
-- 1 つ以上の MFDI View が存在する場合
-  - 最初の 1 つをアクティブにします (**[表示リーフ]の設定は考慮しません**)
-- MFDI View が存在しない場合
-  - [表示リーフ]の設定に従い、View を新規作成してアクティブにします
-
-### モバイル起動時にクイックメモを自動表示
-
-`default: false`
-
-モバイル環境で Obsidian を起動したときに、クイックメモのモーダルを自動で開きます。
-
-また、アプリを一度閉じる（バックグラウンドへ移動）→再度開く場合にも自動表示します。
-
-### デイリーノート
+### 📂 出力先
 
 #### デイリーノートのディレクトリ
 
 `default: ''`（空）
 
-Vault 相対のフォルダを指定します。空の場合は Obsidian の「Daily Notes」設定（フォルダ/フォーマット）に従います。
+デイリーノートの保存先を Vault 相対のフォルダで指定します。
 
 - 例: `Journal/Daily`
-- 空でない場合は、そのフォルダ配下に `YYYY-MM-DD.md`（Daily Notes のフォーマットに準拠）を作成・利用します。
-- 注意: ディレクトリを上書きしている場合、現時点では Daily Notes のテンプレートは適用されず、空ファイルから作成します。
+- 空の場合は、Obsidian の「Daily Notes」で設定したフォルダ・ファイル名フォーマット・テンプレートを使用します。
+- フォルダを指定した場合も、ファイル名は「Daily Notes」のファイル名フォーマットに従います。
+- フォルダを指定した状態でデイリーノートを新規作成すると、テンプレートは適用されず空ファイルになります。
+
+### 📝 メモ
+
+#### 投稿形式
+
+`default: コードブロック`
+
+メモをデイリーノートへ保存するときの形式を指定します。
+
+- コードブロック
+- `見出し1`
+- `見出し2`
+- `見出し3`
+- `見出し4`
+- `見出し5`
+- `見出し6`
+- リスト
 
 #### メモの追記先見出し
 
 `default: ''`（空）
 
-追記先を“# …”のように指定します。該当見出しが存在しない場合は自動で見出しを作成して、そのセクション末尾に追記します。空の場合はファイル末尾に追記します。
+`## つぶやき`のように見出しを指定すると、その見出しのセクション内へメモを追記します。
 
-- 例: `## つぶやき`
-- 対象見出しの「同レベル以上の次見出し」直前、またはファイル末尾に追記します。
+- 指定した見出しがない場合は、デイリーノートの末尾に見出しを作成してから追記します。
+- 空の場合は見出しを作成せず、ファイル末尾へ直接追記します。
+- コードブロック・見出し形式は追記範囲の末尾へ、リスト形式は追記範囲内の最後のリスト項目の直後へ追加します。リスト項目がなければ追記範囲の先頭へ追加します。
 
 #### メモの追記区切り
 
 `default: ''`（空）
 
-指定された見出しの下からこの区切り文字列の上までが追記先になります。
+文字列を指定すると、追記先見出しのセクション内にある最初の一致箇所が追記範囲の終端になります。
+
+- 区切りより先に同レベル以上の見出しがある場合は、その見出しの直前へ追記します。
+- 空の場合は区切りを使用しません。
 
 #### 投稿日時フォーマット
 
 `default: YYYY-MM-DD HH:mm`
 
-投稿時に付与する日時のフォーマットを指定します。
+メモに付与する日時のフォーマットを指定します。タスクの接頭辞・接尾辞に記述した `{{timestamp}}` の展開にも使用されます。
 
 #### 投稿見出しを自動で段下げ
 
 `default: true`
 
-「投稿形式」が見出しの場合、追記先見出しより 1 段下のレベルに自動調整します（例: 追記先が`##`なら投稿は`###`）。
+「投稿形式」が見出しで、そのレベルが追記先見出しと同じか浅い場合、追記先より 1 段深いレベルへ自動調整します。
 
+- 例: 追記先が `##` で投稿形式が `見出し1` の場合、投稿は `###` になります。
+- 投稿形式がすでに追記先より深い場合は変更しません。
 - OFF にすると、設定した見出しレベルのまま投稿します。
 
-### タスク
+### ☑️ タスク
 
 タスクは常に `- [ ] <接頭辞><本文><接尾辞>` の形式で追加されます。
 
@@ -141,37 +111,74 @@ Vault 相対のフォルダを指定します。空の場合は Obsidian の「D
 
 `default: ## ☑️ タスク`
 
-タスクを追加する見出しを指定します。見出しが存在しない場合は、デイリーノートの末尾に見出しとタスクを作成します。
+タスクを追記する見出しを指定します。
+
+- 指定した見出しがない場合は、デイリーノートの末尾に見出しを作成してから追記します。
+- 空の場合は見出しを作成せず、ファイル末尾へ直接追記します。
 
 #### タスクの追記区切り
 
 `default: ---`
 
-指定したタスク見出しの下から、この区切り文字列の上までが追記先になります。
+文字列を指定すると、タスクの追記先見出し内にある最初の一致箇所が追記範囲の終端になります。タスクは追記範囲内の最後のリスト項目の直後へ追加され、リスト項目がなければ追記範囲の先頭へ追加されます。空の場合は区切りを使用しません。
 
-#### タスクの接頭辞・接尾辞
+#### タスクの接頭辞
 
 `default: ''`（空）
 
-タスク本文の前後に付ける文字列を個別に指定できます。空白は自動補完せず、入力されたとおりに使用します。
+タスク本文の直前に付ける文字列を指定します。
 
-接頭辞と接尾辞では `{{timestamp}}` を使用できます。「投稿日時フォーマット」が `HH:mm` の場合、接頭辞を `{{timestamp}} `、接尾辞を ` #todo` にすると、次のように追加されます。
+#### タスクの接尾辞
+
+`default: ''`（空）
+
+タスク本文の直後に付ける文字列を指定します。
+
+接頭辞と接尾辞は入力された空白もそのまま保持し、どちらでも `{{timestamp}}` を使用できます。「投稿日時フォーマット」が `HH:mm` の場合、接頭辞を `{{timestamp}} `、接尾辞を ` #todo` にすると、次のように追加されます。
 
 ```markdown
 - [ ] 12:34 タスク本文 #todo
 ```
 
+### 🖥️ 表示・起動
+
+#### 表示リーフ（PC/モバイル）
+
+`default: left`
+
+PC とモバイルで MFDI View を表示するリーフを個別に指定します。
+
+| 設定値  | 意味                               |
+| ------- | ---------------------------------- |
+| left    | 左サイドリーフに表示します         |
+| right   | 右サイドリーフに表示します         |
+| current | **現在選択中のリーフ**に表示します |
+
+すでに MFDI View が存在する場合は、原則として最初の View を再利用して表示します。ただし、設定が `current` で既存 View が現在選択中のリーフにない場合は、既存 View を閉じて現在のリーフへ開き直します。
+
+#### Obsidian 起動時に自動起動・アクティブにする
+
+`default: false`
+
+有効にすると、Obsidian 起動時に MFDI View を自動で開いて表示します。MFDI View が存在しない場合は、PC またはモバイルの「表示リーフ」設定に従います。
+
+#### モバイル起動時に入力フォームを自動表示
+
+`default: false`
+
+有効にすると、モバイルで Obsidian を起動したときやバックグラウンドから戻ったときに MFDI View を自動で開きます。View を新しく開いたときは入力欄へ自動でフォーカスします。
+
 ## 対応機能/ロードマップ
 
 - [x] メッセージの投稿
   - [x] Markdown 形式に対応
-  - [x] サイトや画像の URL はプレビュー展開
+  - [x] サイト、画像、X（旧 Twitter）の URL はプレビュー展開
 - [x] タスクの追加・完了/未完了の切り替え
+- [x] タスク専用の追記先・書式設定
 - [x] デイリーノートの自動生成
 - [x] カレンダー UI
 - [x] サイドリーフ表示
 - [x] 自動起動
-- [x] Bluesky 投稿機能
 - [x] 見出しでの投稿
 - [x] デイリーノートのディレクトリ指定
 - [x] 指定見出し配下への追記
@@ -199,12 +206,9 @@ Vault 相対のフォルダを指定します。空の場合は Obsidian の「D
 
 ### [Obsidian 起動時に自動起動・アクティブにする]を有効にしても自動起動しない
 
-以下のケースに該当しないか確認してください。たとえば、カレントリーフへ自動起動したいのに、左サイドリーフにも MFDI の View が存在する場合はそれを削除する必要があります。
+すでに MFDI View が存在する場合は、原則として最初の View を再利用して表示します。そのため、「表示リーフ（PC/モバイル）」が `left` または `right` でも、既存 View が別のリーフにあれば移動しません。指定したリーフへ開き直したい場合は、既存の MFDI View を閉じてから再度起動してください。
 
-> - 1 つ以上の MFDI View が存在する場合
->   - 最初の 1 つをアクティブにします (**[表示リーフ]の設定は考慮しません**)
-
-また、[表示リーフ]が左サイドリーフや右サイドリーフになっている場合は、サイドリーフ内で MFDI がアクティブになっているだけです。いきなりサイドリーフが Open されるわけではありません。
+「表示リーフ」が `current` の場合は、既存 View が現在選択中のリーフになければ自動で開き直します。
 
 ## その他
 
@@ -236,13 +240,12 @@ VAULT_DIR=/absolute/path/to/your/ObsidianVault
 
 ### リリース
 
-[Release Action](https://github.com/tadashi-aikawa/mobile-first-daily-interface/actions/workflows/release.yaml) を実行。
+[Release Action](https://github.com/captain-blue210/mobile-first-daily-interface/actions/workflows/release.yaml) を実行。
 
 [Obsidian]: https://obsidian.md/
 [BRAT]: https://github.com/TfTHacker/obsidian42-brat
 [Obsidian Memos]: https://github.com/Quorafind/Obsidian-Memos
 [Thino]: https://github.com/Quorafind/Obsidian-Thino
 [コミュニティプラグイン]: https://help.obsidian.md/Advanced+topics/Community+plugins
-[表示リーフ]: #表示リーフ
 [リボン]: https://minerva.mamansoft.net/Notes/%E3%83%AA%E3%83%9C%E3%83%B3%20(Obsidian)
 [Obsidian起動時に自動起動・アクティブにする]: #obsidian起動時に自動起動・アクティブにする
