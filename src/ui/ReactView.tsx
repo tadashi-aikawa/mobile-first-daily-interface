@@ -34,11 +34,16 @@ export function toText(
   input: string,
   asTask: boolean,
   postFormat: PostFormat,
-  timestampFormat: string
+  timestampFormat: string,
+  taskPrefix = "",
+  taskSuffix = ""
 ): string {
   if (asTask) {
+    const timestamp = moment().format(timestampFormat);
+    const expandTimestamp = (value: string) =>
+      value.split("{{timestamp}}").join(timestamp);
     return `
-- [ ] ${input}
+- [ ] ${expandTimestamp(taskPrefix)}${input}${expandTimestamp(taskSuffix)}
 `;
   }
 
@@ -147,7 +152,9 @@ export const ReactView = ({
       input,
       asTask,
       effectivePostFormat,
-      settings.timestampFormat
+      settings.timestampFormat,
+      settings.taskPrefix,
+      settings.taskSuffix
     );
 
     let note = currentDailyNote;
@@ -161,14 +168,22 @@ export const ReactView = ({
 
     if (!note) return;
 
-    const spec = settings.appendSectionSpec?.trim();
+    const spec = (
+      asTask ? settings.taskAppendSectionSpec : settings.appendSectionSpec
+    )?.trim();
+    const sectionEnd = asTask
+      ? settings.taskAppendSectionEnd
+      : settings.appendSectionEnd;
+    const insertionFormat = asTask
+      ? postFormatMap["リスト"]
+      : effectivePostFormat;
     if (spec) {
       await appHelper.insertTextUnderSection(
         note,
         spec,
         text,
-        effectivePostFormat,
-        settings.appendSectionEnd
+        insertionFormat,
+        sectionEnd
       );
     } else {
       await appHelper.insertTextToEnd(note, text);

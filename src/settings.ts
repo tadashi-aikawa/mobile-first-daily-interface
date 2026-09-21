@@ -16,6 +16,10 @@ export interface Settings {
   appendSectionEnd: string;
   timestampFormat: string;
   autoDemotePostHeading: boolean;
+  taskAppendSectionSpec: string;
+  taskAppendSectionEnd: string;
+  taskPrefix: string;
+  taskSuffix: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -29,6 +33,10 @@ export const DEFAULT_SETTINGS: Settings = {
   appendSectionEnd: "",
   timestampFormat: "YYYY-MM-DD HH:mm",
   autoDemotePostHeading: true,
+  taskAppendSectionSpec: "## ☑️ タスク",
+  taskAppendSectionEnd: "---",
+  taskPrefix: "",
+  taskSuffix: "",
 };
 
 const leafOptions = ["left", "current", "right"];
@@ -90,7 +98,7 @@ export class MFDISettingTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("追記先の見出し")
+      .setName("メモの追記先見出し")
       .setDesc(
         "例: ## つぶやき。指定された見出し配下の末尾に追記します。空の場合はファイル末尾に追記します。"
       )
@@ -105,7 +113,7 @@ export class MFDISettingTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("追記区切り")
+      .setName("メモの追記区切り")
       .setDesc(
         "指定された見出しの下からこの区切り文字列の上までが追記先になります。"
       )
@@ -144,6 +152,62 @@ export class MFDISettingTab extends PluginSettingTab {
             this.plugin.rerenderView();
           }
         );
+      });
+
+    containerEl.createEl("h3", { text: "☑️ タスク" });
+
+    new Setting(containerEl)
+      .setName("タスクの追記先見出し")
+      .setDesc(
+        "例: ## ☑️ タスク。指定された見出し配下の末尾に追記します。見出しがない場合はファイル末尾に見出しを作成します。"
+      )
+      .addText((cb) => {
+        TextComponentEvent.onChange(cb, async (value) => {
+          this.plugin.settings.taskAppendSectionSpec = value;
+          await this.plugin.saveSettings();
+        })
+          .setPlaceholder("例: ## ☑️ タスク")
+          .setValue(this.plugin.settings.taskAppendSectionSpec);
+      });
+
+    new Setting(containerEl)
+      .setName("タスクの追記区切り")
+      .setDesc(
+        "指定された見出しの下から、この区切り文字列の上までがタスクの追記先になります。"
+      )
+      .addText((cb) => {
+        TextComponentEvent.onChange(cb, async (value) => {
+          this.plugin.settings.taskAppendSectionEnd = value;
+          await this.plugin.saveSettings();
+        }).setValue(this.plugin.settings.taskAppendSectionEnd);
+      });
+
+    new Setting(containerEl)
+      .setName("タスクの接頭辞")
+      .setDesc(
+        "タスク本文の直前に追加します。{{timestamp}} は投稿日時フォーマットで展開されます。空白も入力どおり保持します。"
+      )
+      .addText((cb) => {
+        TextComponentEvent.onChange(cb, async (value) => {
+          this.plugin.settings.taskPrefix = value;
+          await this.plugin.saveSettings();
+        })
+          .setPlaceholder("例: {{timestamp}} ")
+          .setValue(this.plugin.settings.taskPrefix);
+      });
+
+    new Setting(containerEl)
+      .setName("タスクの接尾辞")
+      .setDesc(
+        "タスク本文の直後に追加します。{{timestamp}} は投稿日時フォーマットで展開されます。空白も入力どおり保持します。"
+      )
+      .addText((cb) => {
+        TextComponentEvent.onChange(cb, async (value) => {
+          this.plugin.settings.taskSuffix = value;
+          await this.plugin.saveSettings();
+        })
+          .setPlaceholder("例:  #todo")
+          .setValue(this.plugin.settings.taskSuffix);
       });
 
     new Setting(containerEl)
