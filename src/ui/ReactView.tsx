@@ -30,6 +30,23 @@ export interface Post {
   offset: number;
 }
 
+export function getBottomOverlap(
+  container: Pick<DOMRect, "bottom">,
+  overlay: Pick<DOMRect, "top" | "bottom">
+): number {
+  return Math.max(0, Math.min(container.bottom, overlay.bottom) - overlay.top);
+}
+
+export function partitionTasks(tasks: Task[]): {
+  incomplete: Task[];
+  completed: Task[];
+} {
+  return {
+    incomplete: tasks.filter((task) => task.mark === " "),
+    completed: tasks.filter((task) => task.mark !== " "),
+  };
+}
+
 export function toText(
   input: string,
   asTask: boolean,
@@ -89,6 +106,7 @@ export const ReactView = ({
   const [posts, setPosts] = useState<Post[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [asTask, setAsTask] = useState(false);
+  const [mobileNavbarInset, setMobileNavbarInset] = useState(0);
   const [viewport, setViewport] = useState(() => ({
     bottom:
       typeof window !== "undefined"
@@ -107,6 +125,10 @@ export const ReactView = ({
         : 0,
   }));
   const keyboardHeight = Math.max(0, viewport.occluded - viewport.bottom);
+  const footerBottomInset =
+    Platform.isMobile && keyboardHeight === 0
+      ? Math.max(viewport.bottom, mobileNavbarInset)
+      : 0;
   const [footerHeight, setFooterHeight] = useState(0);
   const canSubmit = useMemo(() => input.trim().length > 0, [input]);
 
@@ -275,6 +297,45 @@ export const ReactView = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!Platform.isMobile) return;
+
+    const root = rootRef.current;
+    const ownerWindow = root?.ownerDocument.defaultView;
+    const mobileNavbar =
+      root?.ownerDocument.querySelector<HTMLElement>(".mobile-navbar");
+    if (!root || !ownerWindow || !mobileNavbar) return;
+
+    const measure = () => {
+      const isVisible =
+        ownerWindow.getComputedStyle(mobileNavbar).display !== "none";
+      const inset = isVisible
+        ? Math.ceil(
+            getBottomOverlap(
+              root.getBoundingClientRect(),
+              mobileNavbar.getBoundingClientRect()
+            )
+          )
+        : 0;
+      setMobileNavbarInset((current) => (current === inset ? current : inset));
+    };
+
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(root);
+    resizeObserver.observe(mobileNavbar);
+    ownerWindow.addEventListener("resize", measure);
+    ownerWindow.visualViewport?.addEventListener("resize", measure);
+    ownerWindow.visualViewport?.addEventListener("scroll", measure);
+
+    return () => {
+      resizeObserver.disconnect();
+      ownerWindow.removeEventListener("resize", measure);
+      ownerWindow.visualViewport?.removeEventListener("resize", measure);
+      ownerWindow.visualViewport?.removeEventListener("scroll", measure);
+    };
+  }, []);
+
   // Scroll to bottom when focusing input so footer remains visible
   useEffect(() => {
     if (!Platform.isMobile) return;
@@ -309,15 +370,15 @@ export const ReactView = ({
 
   // Toggle a class on the Obsidian view container to override padding-bottom while input is focused
   useEffect(() => {
-    const vc = rootRef.current?.closest('.view-content') as HTMLElement | null;
+    const vc = rootRef.current?.closest(".view-content") as HTMLElement | null;
     if (!vc) return;
     if (isInputFocused && Platform.isMobile) {
-      vc.classList.add('mfdi-input-focused');
+      vc.classList.add("mfdi-input-focused");
     } else {
-      vc.classList.remove('mfdi-input-focused');
+      vc.classList.remove("mfdi-input-focused");
     }
     return () => {
-      vc.classList.remove('mfdi-input-focused');
+      vc.classList.remove("mfdi-input-focused");
     };
   }, [isInputFocused]);
 
@@ -426,24 +487,25 @@ export const ReactView = ({
     await appHelper.setCheckMark(currentDailyNote.path, mark, task.offset);
   };
 
+  const taskGroups = useMemo(() => partitionTasks(tasks), [tasks]);
+
   const contents = useMemo(
     () =>
       asTask ? (
         <>
-          <Box
-            borderStyle={"solid"}
-            borderRadius={"10px"}
-            borderColor={"var(--table-border-color)"}
-            borderWidth={"2px"}
-            marginY={8}
-            minHeight={50}
-          >
-            <TransitionGroup className="list">
-              {tasks
-                .filter((x) => x.mark === " ")
-                .map((x) => (
+          {taskGroups.incomplete.length > 0 && (
+            <Box
+              borderStyle={"solid"}
+              borderRadius={"10px"}
+              borderColor={"var(--table-border-color)"}
+              borderWidth={"2px"}
+              marginY={8}
+              paddingTop={3}
+            >
+              <TransitionGroup className="list">
+                {taskGroups.incomplete.map((x) => (
                   <CSSTransition
-                    key={date.format() + x.name + x.mark}
+                    key={date.format() + x.offset + x.name + x.mark}
                     timeout={300}
                     classNames="item"
                   >
@@ -455,22 +517,22 @@ export const ReactView = ({
                     </Box>
                   </CSSTransition>
                 ))}
-            </TransitionGroup>
-          </Box>
-          <Box
-            borderStyle={"solid"}
-            borderRadius={"10px"}
-            borderColor={"var(--table-border-color)"}
-            borderWidth={"2px"}
-            marginY={8}
-            minHeight={50}
-          >
-            <TransitionGroup className="list">
-              {tasks
-                .filter((x) => x.mark !== " ")
-                .map((x) => (
+              </TransitionGroup>
+            </Box>
+          )}
+          {taskGroups.completed.length > 0 && (
+            <Box
+              borderStyle={"solid"}
+              borderRadius={"10px"}
+              borderColor={"var(--table-border-color)"}
+              borderWidth={"2px"}
+              marginY={8}
+              paddingTop={3}
+            >
+              <TransitionGroup className="list">
+                {taskGroups.completed.map((x) => (
                   <CSSTransition
-                    key={date.format() + x.name + x.mark}
+                    key={date.format() + x.offset + x.name + x.mark}
                     timeout={300}
                     classNames="item"
                   >
@@ -482,8 +544,9 @@ export const ReactView = ({
                     </Box>
                   </CSSTransition>
                 ))}
-            </TransitionGroup>
-          </Box>
+              </TransitionGroup>
+            </Box>
+          )}
         </>
       ) : (
         <TransitionGroup className="list">
@@ -502,7 +565,7 @@ export const ReactView = ({
           ))}
         </TransitionGroup>
       ),
-    [posts, tasks, asTask]
+    [posts, taskGroups, asTask]
   );
 
   return (
@@ -569,7 +632,9 @@ export const ReactView = ({
           WebkitOverflowScrolling: "touch",
         }}
         paddingBottom={
-          isInputFocused && Platform.isMobile ? 0 : footerHeight + keyboardHeight
+          isInputFocused && Platform.isMobile
+            ? 0
+            : footerHeight + keyboardHeight
         }
       >
         {currentDailyNote && contents}
@@ -598,7 +663,7 @@ export const ReactView = ({
               }
             : {}
         }
-        pb={Platform.isMobile && keyboardHeight > 0 ? 0 : viewport.bottom}
+        pb={`${footerBottomInset}px`}
         flexShrink={0}
         width="100%"
       >

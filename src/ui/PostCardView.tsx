@@ -31,7 +31,6 @@ export const PostCardView = ({
     new Notice("copied");
   };
 
-
   useEffect(() => {
     (async function () {
       const urls = pickUrls(post.message);
@@ -57,6 +56,7 @@ export const PostCardView = ({
       <Box
         fontSize={"85%"}
         paddingX={16}
+        paddingTop={3}
         wordBreak={"break-all"}
         className="markdown-rendered"
       >
